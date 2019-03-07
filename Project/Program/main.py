@@ -2,6 +2,7 @@ import collections
 from pprint import pprint
 
 import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
 import numpy as np
 import random
 from matplotlib import animation
@@ -73,7 +74,7 @@ def najkrotsza_sciezka(floor_wall, start):
     while queue:
         path = queue.popleft()
         x, y = path[-1]
-        if floor_wall[y][x] == 2:
+        if floor_wall[x][y] == 2:
             return path
         for x2, y2 in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
             if 0 <= x2 < nrows and 0 <= y2 < ncols and floor_wall[y2][x2] != 4 and (x2, y2) not in seen:
@@ -115,11 +116,27 @@ ay.set_yticks(col_labels)
 
 pprint(floor_wall)
 
-floor_1 = ax.imshow(floor_wall, cmap=plt.cm.get_cmap('Blues'))
-floor_2 = ay.imshow(floor_wall, cmap=plt.cm.get_cmap('Blues'))
+floor_1 = ax.imshow(floor_wall, cmap=plt.cm.get_cmap('Accent'))
+floor_2 = ay.imshow(floor_wall, cmap=plt.cm.get_cmap('Accent'))
 
+
+values = np.arange(0, 5, 1)
+labels = ["Sciezka", "Winda", "Cel", "Poczatek", "Sciana"]
+
+colors = [floor_1.cmap(floor_1.norm(value)) for value in values]
+patches = [mpatches.Patch(color=colors[i], label=f"{labels[i]}") for i in range(len(values))]
+
+
+plt.legend(handles=patches, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
+
+print(f"Destination: ({DESTINATION[0]}, {DESTINATION[1]})")
+print(f"Source: ({SOURCE[0]}, {SOURCE[1]})")
 path = najkrotsza_sciezka(floor_wall, SOURCE)
 print(path)
+if list(path[-1]) == DESTINATION:
+    print("Destination succeeded")
+if path[0] == SOURCE:
+    print("Source succeeded")
 
 ani = animation.FuncAnimation(fig, aktualizowanie_danych, dane_do_animacji, interval=500,
                               save_count=50, blit=True)
