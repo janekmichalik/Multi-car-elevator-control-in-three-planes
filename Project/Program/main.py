@@ -1,3 +1,4 @@
+import collections
 from pprint import pprint
 
 import matplotlib.pyplot as plt
@@ -33,10 +34,10 @@ floor_wall = np.zeros(nrows*ncols)
 floor_wall = floor_wall.reshape((nrows, ncols))
 
 # budujemy ulozenie pietra (sciezki/sciany)
-# 2 - sciana
+# 4 - sciana
 # 0 - sciezka
-# 4 - source
-# 1 - destination
+# 3 - source
+# 2 - destination
 for wiersz in range(nrows):
     for kolumna in range(ncols):
         if wiersz % 2 == 0 and kolumna % 2 == 0:
@@ -62,23 +63,22 @@ while floor_wall[destination_x][destination_y] == 4 and (source_x != destination
     destination_x = random.randint(0, 10)
     destination_y = random.randint(0, 10)
 DESTINATION = [destination_x, destination_y]
-floor_wall[source_x][source_y] = 2
+floor_wall[destination_x][destination_y] = 2
 
 
-def najkrotsza_sciezka():
-    
-    dystans_x = abs(SOURCE[0] - DESTINATION[0])
-    dystans_y = abs(SOURCE[1] - DESTINATION[1])
-
-    # dwie metody szukania sciezki
-    
-    # w lini prostej
-    #  euclidean_distance = np.sqrt(dystans_x ** 2 + dystans_y ** 2)
-    # po wspolrzednych
-
-    manhattan_distance = abs(dystans_x + dystans_y)
-    dystans = manhattan_distance
-    return dystans
+def najkrotsza_sciezka(floor_wall, start):
+    queue = collections.deque([[start]])
+    seen = []
+    seen.append(set(start))
+    while queue:
+        path = queue.popleft()
+        x, y = path[-1]
+        if floor_wall[y][x] == 2:
+            return path
+        for x2, y2 in ((x+1, y), (x-1, y), (x, y+1), (x, y-1)):
+            if 0 <= x2 < nrows and 0 <= y2 < ncols and floor_wall[y2][x2] != 4 and (x2, y2) not in seen:
+                queue.append(path + [(x2, y2)])
+                seen.append((x2, y2))
 
 
 def aktualizowanie_danych(data):
@@ -100,6 +100,7 @@ def dane_do_animacji():
                 yield floor_wall
 
 
+
 row_labels = range(nrows)
 col_labels = row_labels
 
@@ -117,7 +118,8 @@ pprint(floor_wall)
 floor_1 = ax.imshow(floor_wall, cmap=plt.cm.get_cmap('Blues'))
 floor_2 = ay.imshow(floor_wall, cmap=plt.cm.get_cmap('Blues'))
 
-path = najkrotsza_sciezka()
+path = najkrotsza_sciezka(floor_wall, SOURCE)
+print(path)
 
 ani = animation.FuncAnimation(fig, aktualizowanie_danych, dane_do_animacji, interval=500,
                               save_count=50, blit=True)
