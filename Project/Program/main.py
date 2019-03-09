@@ -1,11 +1,11 @@
 import collections
+import random
 from pprint import pprint
 
 import matplotlib.pyplot as plt
-import matplotlib.patches as mpatches
-import numpy as np
-import random
+import matplotlib.patches as patches
 from matplotlib import animation
+import numpy as np
 
 
 class ElevatorConst:
@@ -44,11 +44,14 @@ class Floor:
         self.create_floor()
 
     def create_floor(self):
-        """Function which create floor schema:
-        # 4 - wall
-        # 0 - path
-        # 3 - source
-        # 2 - destination
+        """
+        The function that creates the floor according to the following scheme:
+        -> 4 - wall
+        -> 0 - path
+        -> 3 - source
+        -> 2 - destination
+        -> 1 - elevator
+        :return: floor
         """
 
         self.floor = np.zeros(self.floor_rows * self.floor_cols)
@@ -80,6 +83,10 @@ class Elevator(Floor):
         self.compute_shortest_path()
 
     def generate_starting_point(self):
+        """
+        The function that generate the starting point (source) randomly.
+        :return: source
+        """
 
         while self.floor[self.source_x][self.source_y] == 4:
             self.source_x = random.randint(0, 10)
@@ -88,6 +95,10 @@ class Elevator(Floor):
         self.floor[self.source_x, self.source_y] = ElevatorConst.SOURCE
 
     def generate_ending_point(self):
+        """
+        The function that generate the ending point (destination) randomly.
+        :return: destination
+        """
 
         while self.floor[self.dest_x][self.dest_y] == 4 \
                 and (self.source_x != self.dest_x or self.source_y != self.dest_y):
@@ -97,6 +108,11 @@ class Elevator(Floor):
         self.floor[self.dest_x][self.dest_y] = ElevatorConst.DESTINATION
 
     def compute_shortest_path(self):
+        """
+        The function that compute the shortest path from source to destination.
+        :return: shortest_path
+        """
+
         queue = collections.deque([[self.source]])
         seen = []
         seen.append(set(self.source))
@@ -129,16 +145,25 @@ class Plot(Elevator):
         self.values = np.arange(0, 5, 1)
         self.labels = ["Path", "Elevator", "Destination", "Source", "Wall"]
         self.colors = [self.floor_1.cmap(self.floor_1.norm(value)) for value in self.values]
-        self.patches = [mpatches.Patch(color=self.colors[i], label=f"{self.labels[i]}") for i in range(len(self.values))]
+        self.patches = [patches.Patch(color=self.colors[i], label=f"{self.labels[i]}") for i in range(len(self.values))]
 
         self.draw_plot()
 
     def update(self, data):
+        """
+        The function that updates the data during simulation.
+        :param data:
+        :return: simulation
+        """
         self.floor_1.set_data(data)
         self.floor_2.set_data(data)
         return self.floor_1, self.floor_2
 
     def data(self):
+        """
+        The function using by matplotlib.animation to create simulation data.
+        :return: data
+        """
         for row in range(self.floor_rows):
             for col in range(self.floor_cols):
                 if row == self.dest_x and col == self.dest_y:
@@ -151,6 +176,10 @@ class Plot(Elevator):
                     yield self.floor
 
     def logs(self):
+        """
+        The functions that returns logs.
+        :return: logs
+        """
 
         pprint(self.floor)
 
@@ -165,6 +194,10 @@ class Plot(Elevator):
             print("Source succeeded")
 
     def draw_plot(self):
+        """
+        THe function which drawing a plot to UI.
+        :return: plot
+        """
 
         self.ax.set_title('Floor no 1')
         self.ay.set_title('Floor no 2')
