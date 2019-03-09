@@ -14,14 +14,15 @@ class Plot(Elevator):
 
         super().__init__()
         self.fig = None
-        self.ax, self.ay = None, None
+        self.ax, self.ay, self.az = None, None, None
         self.row_labels = range(self.floor_rows)
         self.col_labels = self.row_labels
 
-        self.fig, (self.ax, self.ay) = plt.subplots(self.num_of_floors_x, self.num_of_floors_y, figsize=(16, 12))
+        self.fig, (self.ax, self.ay, self.az) = plt.subplots(self.num_of_floors_x, self.num_of_floors_y, figsize=(16, 12))
         self.fig.canvas.set_window_title('Multi-car elevator control in three planes')
         self.floor_1 = self.ax.imshow(self.floor, cmap=plt.cm.get_cmap('Accent'))
         self.floor_2 = self.ay.imshow(self.floor, cmap=plt.cm.get_cmap('Accent'))
+        self.floor_3 = self.az.imshow(self.floor, cmap=plt.cm.get_cmap('Accent'))
         self.ani = animation.FuncAnimation(self.fig, self.update, self.data, interval=500, save_count=50)
         self.values = np.arange(0, 6, 1)
         self.labels = ["Path", "Elevator", "Destination", "Source", "Wall", "Shaft"]
@@ -38,7 +39,8 @@ class Plot(Elevator):
         """
         self.floor_1.set_data(data)
         self.floor_2.set_data(data)
-        return self.floor_1, self.floor_2
+        self.floor_3.set_data(data)
+        return self.floor_1, self.floor_2, self.floor_3
 
     def data(self):
         """
@@ -84,12 +86,16 @@ class Plot(Elevator):
 
         self.ax.set_title('Floor no 1')
         self.ay.set_title('Floor no 2')
+        self.az.set_title('Floor no 3')
 
         self.ax.set_xticks(self.row_labels)
         self.ax.set_yticks(self.col_labels)
 
         self.ay.set_xticks(self.row_labels)
         self.ay.set_yticks(self.col_labels)
+
+        self.az.set_xticks(self.row_labels)
+        self.az.set_yticks(self.col_labels)
 
         plt.legend(handles=self.patches, bbox_to_anchor=(1.05, 1), loc=2, borderaxespad=0.)
         plt.show()
