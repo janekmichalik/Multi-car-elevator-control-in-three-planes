@@ -7,7 +7,7 @@ class Floor:
     def __init__(self):
 
         self.num_of_floors_x = 1
-        self.num_of_floors_y = 2
+        self.num_of_floors_y = 3
 
         self.floor_rows = 10 + 1
         self.floor_cols = self.floor_rows
