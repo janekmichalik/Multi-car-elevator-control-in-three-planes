@@ -121,7 +121,8 @@ class Plot(Elevator):
         self.row_labels = range(self.floor_rows)
         self.col_labels = self.row_labels
 
-        self.fig, (self.ax, self.ay) = plt.subplots(self.num_of_floors_x, self.num_of_floors_y)
+        self.fig, (self.ax, self.ay) = plt.subplots(self.num_of_floors_x, self.num_of_floors_y, figsize=(16, 12))
+        self.fig.canvas.set_window_title('Multi-car elevator control in three planes')
         self.floor_1 = self.ax.imshow(self.floor, cmap=plt.cm.get_cmap('Accent'))
         self.floor_2 = self.ay.imshow(self.floor, cmap=plt.cm.get_cmap('Accent'))
         self.ani = animation.FuncAnimation(self.fig, self.update, self.data, interval=500, save_count=50)
