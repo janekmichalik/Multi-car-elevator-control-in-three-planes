@@ -15,7 +15,6 @@ class ElevatorConst:
     ELEVATOR = 1
     SOURCE = 3
     DESTINATION = 2
-    ACHIEVED = 8
 
     floor_schema = """
                     [[2., 0., 2., 0., 2., 0., 2., 0., 2., 0., 2.],
@@ -167,6 +166,7 @@ class Plot(Elevator):
         """
         for point in self.shortest_path:
             row, col = point[0], point[1]
+
             if [row, col] == self.destination:
                 self.floor[row][col] = ElevatorConst.ELEVATOR
                 return self.ani.event_source.stop()
@@ -176,7 +176,6 @@ class Plot(Elevator):
             if self.floor[row][col] == ElevatorConst.ELEVATOR:
                 self.floor[row][col] = ElevatorConst.PATH
                 yield self.floor
-
 
     def logs(self):
         """
