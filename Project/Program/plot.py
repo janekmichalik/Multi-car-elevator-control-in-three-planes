@@ -23,8 +23,8 @@ class Plot(Elevator):
         self.floor_1 = self.ax.imshow(self.floor, cmap=plt.cm.get_cmap('Accent'))
         self.floor_2 = self.ay.imshow(self.floor, cmap=plt.cm.get_cmap('Accent'))
         self.ani = animation.FuncAnimation(self.fig, self.update, self.data, interval=500, save_count=50)
-        self.values = np.arange(0, 5, 1)
-        self.labels = ["Path", "Elevator", "Destination", "Source", "Wall"]
+        self.values = np.arange(0, 6, 1)
+        self.labels = ["Path", "Elevator", "Destination", "Source", "Wall", "Shaft"]
         self.colors = [self.floor_1.cmap(self.floor_1.norm(value)) for value in self.values]
         self.patches = [patches.Patch(color=self.colors[i], label=f"{self.labels[i]}") for i in range(len(self.values))]
 
