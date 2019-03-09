@@ -166,8 +166,9 @@ class Plot(Elevator):
         """
         for row in range(self.floor_rows):
             for col in range(self.floor_cols):
-                if row == self.dest_x and col == self.dest_y:
-                    self.ani.event_source.stop()
+                if [row, col] == self.destination:
+                    self.floor[row][col] = 1
+                    return self.ani.event_source.stop()
                 if self.floor[row][col] == ElevatorConst.PATH:
                     self.floor[row][col] = ElevatorConst.ELEVATOR
                     yield self.floor
