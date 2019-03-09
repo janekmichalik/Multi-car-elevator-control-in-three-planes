@@ -164,17 +164,18 @@ class Plot(Elevator):
         The function using by matplotlib.animation to create simulation data.
         :return: data
         """
-        for row in range(self.floor_rows):
-            for col in range(self.floor_cols):
-                if [row, col] == self.destination:
-                    self.floor[row][col] = 1
-                    return self.ani.event_source.stop()
-                if self.floor[row][col] == ElevatorConst.PATH:
-                    self.floor[row][col] = ElevatorConst.ELEVATOR
-                    yield self.floor
-                if self.floor[row][col] == ElevatorConst.ELEVATOR:
-                    self.floor[row][col] = ElevatorConst.PATH
-                    yield self.floor
+        for point in self.shortest_path:
+            row, col = point[0], point[1]
+
+            if [row, col] == self.destination:
+                self.floor[row][col] = ElevatorConst.ELEVATOR
+                return self.ani.event_source.stop()
+            if self.floor[row][col] == ElevatorConst.PATH:
+                self.floor[row][col] = ElevatorConst.ELEVATOR
+                yield self.floor
+            if self.floor[row][col] == ElevatorConst.ELEVATOR:
+                self.floor[row][col] = ElevatorConst.PATH
+                yield self.floor
 
     def logs(self):
         """
