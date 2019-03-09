@@ -23,6 +23,7 @@ class Floor:
         -> 3 - source
         -> 2 - destination
         -> 1 - elevator
+        -> 5 - shaft
         :return: floor
         """
 
@@ -31,5 +32,9 @@ class Floor:
 
         for row in range(self.floor_rows):
             for col in range(self.floor_cols):
-                if row % 2 == 0 and col % 2 == 0:
+                if [row, col] == ElevatorConst.SHAFT_1:
+                    self.floor[row][col] = ElevatorConst.SHAFT
+                elif [row, col] == ElevatorConst.SHAFT_2:
+                    self.floor[row][col] = ElevatorConst.SHAFT
+                elif row % 2 == 0 and col % 2 == 0:
                     self.floor[row][col] = ElevatorConst.WALL
