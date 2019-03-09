@@ -50,6 +50,14 @@ class Plot(Elevator):
         for point in self.shortest_path:
             row, col = point[0], point[1]
 
+            if [row, col] == ElevatorConst.SHAFT_1:
+                self.floor[row][col] = ElevatorConst.ELEVATOR
+                yield self.floor
+                self.floor[row][col] = ElevatorConst.SHAFT
+            if [row, col] == ElevatorConst.SHAFT_2:
+                self.floor[row][col] = ElevatorConst.ELEVATOR
+                yield self.floor
+                self.floor[row][col] = ElevatorConst.SHAFT
             if [row, col] == self.destination:
                 self.floor[row][col] = ElevatorConst.ELEVATOR
                 return self.ani.event_source.stop()
