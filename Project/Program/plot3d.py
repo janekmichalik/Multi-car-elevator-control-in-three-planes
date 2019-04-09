@@ -61,7 +61,7 @@ class Plot(Simulation):
         self.fcolors_2 = self.explode(self.facecolors)
 
         self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
-                       facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
+                                     facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
         if [floor, row, col] == self.t.DESTINATION:
             self.facecolors[row][col][floor] = '#ff99ff4D'
         elif [row, col] != ElevatorConst.SHAFT_3D:

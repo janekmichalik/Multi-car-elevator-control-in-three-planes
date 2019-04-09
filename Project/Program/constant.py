@@ -2,15 +2,9 @@ class ElevatorConst:
 
     NUM_OF_ELEVATORS = 1
 
-    NUM_OF_FLOORS_X = 1
-    NUM_OF_FLOORS_Y = 1
-
     NUM_OF_FLOORS = 5
     NUM_OF_FLOORS_VERTICAL = 5
     NUM_OF_FLOORS_HORIZONTAL = 5
-
-    FLOOR_ROWS = 10 + 1
-    FLOOR_COLS = FLOOR_ROWS
 
     WALL = 4
     PATH = 0
@@ -20,5 +14,3 @@ class ElevatorConst:
     SHAFT = 5
 
     SHAFT_3D = [2, 2]
-    SHAFT_1 = [7, 3]
-    SHAFT_2 = [3, 7]
