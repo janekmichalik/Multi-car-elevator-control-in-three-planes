@@ -35,6 +35,10 @@ class Elevator(Floor):
         self.get_path()
 
     def get_path_between_flrs(self):
+        """
+        The function that fulfill the shortest path with 3d coordinates on different floors
+        :return: shortest pasth
+        """
         absolut = np.abs(self.SOURCE[0] - self.DESTINATION[0])
         if absolut >= 1:
             final_path = []
@@ -53,35 +57,34 @@ class Elevator(Floor):
                 _, y, z = self.path[-1]
                 common_path = [flr, y, z]
                 final_path.append(common_path)
+
             if self.SOURCE[0] > self.DESTINATION[0]:
                 final_path.reverse()
             self.shortest_path.extend(final_path)
 
     def get_path(self):
+        """
+        The function that call 'compute_shortest_path' depending on source and destination floor
+        :return: shortest path
+        """
+
         if self.source_flr == self.destination_flr:
             self.shortest_path = self.compute_shortest_path(self.SOURCE, self.floors)
         else:
-            path_1 = self.compute_shortest_path(self.SOURCE, self.floors, destination=ElevatorConst.SHAFT)
+            self.path = self.compute_shortest_path(self.SOURCE, self.floors, destination=ElevatorConst.SHAFT)
 
-            # self.floors[self.source_flr][self.source[0]][self.source[1]] = ElevatorConst.PATH
-            # path_2 = self.compute_shortest_path(self.source_flr, self.source, self.floors[self.source_flr],
-            #                                     destination=ElevatorConst.SHAFT)
-            # if len(path_1) > len(path_2):
-            #     self.path = path_2
-            # else:
-            #     self.path = path_1
-
-            self.path = path_1
             self.shortest_path.extend(self.path)
-            tmp = self.path[-1]
-            tmp1, tmp2 = tmp[1], tmp[2]
-            source = [self.DESTINATION[0], tmp1, tmp2]
+            source = [self.DESTINATION[0], self.path[-1][1], self.path[-1][2]]
             self.extend_path = self.compute_shortest_path(source, self.floors)
             self.get_path_between_flrs()
             self.shortest_path.extend(self.extend_path)
             self.list_remove_duplicates()
 
     def list_remove_duplicates(self):
+        """
+        The function that removes duplicates from shortest path
+        :return: shortest path
+        """
         tmp = []
         for elem in self.shortest_path:
             if list(elem) not in tmp:
@@ -94,7 +97,6 @@ class Elevator(Floor):
         :return: source floor
         """
 
-        # self.source_flr = 4
         self.source_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
 
     def generate_ending_floor(self):
@@ -103,7 +105,6 @@ class Elevator(Floor):
         :return: destination floor
         """
 
-        # self.destination_flr = 3
         self.destination_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
 
     def generate_starting_point(self):
@@ -153,11 +154,5 @@ class Elevator(Floor):
             for x2, y2 in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
                 if 0 <= x2 < ElevatorConst.NUM_OF_FLOORS_VERTICAL and 0 <= y2 < ElevatorConst.NUM_OF_FLOORS_HORIZONTAL \
                         and floor[y2][x2] != ElevatorConst.WALL and [x2, y2] not in seen:
-                    #
-                    # if shortest_path is None:
-                    #     try:
-                    #         flr = flr - 1
-                    #         floor = floors[flr]
-
                     queue.append(shortest_path + [[flr, x2, y2]])
                     seen.append([x2, y2])

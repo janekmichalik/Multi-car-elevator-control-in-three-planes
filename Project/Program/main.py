@@ -1,4 +1,4 @@
-from Program.new_plot import Plot
+from Program.plot3d import Plot
 
 
 def main():
