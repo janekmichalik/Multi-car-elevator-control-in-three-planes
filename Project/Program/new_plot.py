@@ -1,14 +1,10 @@
-from pprint import pprint
-
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import animation
 
-from IPython.display import HTML
-
 from Program.constant import ElevatorConst
 from Program.simulation import Simulation
-from mpl_toolkits.mplot3d import Axes3D  # noqa: F401 unused import
+from mpl_toolkits.mplot3d import Axes3D
 
 
 class Plot(Simulation):
@@ -30,7 +26,8 @@ class Plot(Simulation):
         self.shrink_gaps()
         # Creating the Animation object
         lenght = len(self.elevators[0].shortest_path)
-        self.ani = animation.FuncAnimation(self.fig, self.update, lenght, interval=100, blit=False)
+        self.t = self.elevators[0]
+        self.ani = animation.FuncAnimation(self.fig, self.update, lenght, interval=350, blit=False, repeat=True)
         self.draw_plot()
 
     def logs(self):
@@ -39,27 +36,33 @@ class Plot(Simulation):
         :return: logs
         """
 
-        print(f"Destination: ({self.DESTINATION})")
-        print(f"Source: ({self.SOURCE})")
+        print(f"Destination: ({self.t.DESTINATION})")
+        print(f"Source: ({self.t.SOURCE})")
 
-        path = self.elevators[0].shortest_path
+        path = self.t.shortest_path
         print(len(path))
         print(path)
-        if list(path[-1]) == self.DESTINATION:
+        if list(path[-1]) == self.t.DESTINATION:
             print("Destination succeeded")
-        if path[0] == self.SOURCE:
+        if path[0] == self.t.SOURCE:
             print("Source succeeded")
 
     def update(self, num):
         self.ax.cla()
-        point = self.elevators[0].shortest_path
-        floor, col, row = point[num]
+        point = self.t.shortest_path
+        floor, row, col = point[num]
 
-        self.facecolors[row][col][floor] = '#993300'
+        self.facecolors[row][col][floor] = '#ff99ff'
         self.fcolors_2 = self.explode(self.facecolors)
 
         self.ax.voxels(self.x, self.y, self.z, self.filled_2,
                        facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
+        if [floor, row, col] == self.t.DESTINATION:
+            self.facecolors[row][col][floor] = '#ff99ff4D'
+        elif [row, col] != ElevatorConst.SHAFT_3D:
+            self.facecolors[row][col][floor] = '#1f77b430'
+        else:
+            self.facecolors[row][col][floor] = '#ff000026'
 
     def shrink_gaps(self):
         # Shrink the gaps

@@ -15,7 +15,7 @@ class Floor:
         -> 4 - wall - #2952a3
         -> 0 - path - #1f77b430
         -> 3 - source
-        -> 2 - destination - #00cc99
+        -> 2 - destination - ff99ff4D
         -> 1 - elevator -  #ff99ff
         -> 5 - shaft - #ff000026
         :return: floor
