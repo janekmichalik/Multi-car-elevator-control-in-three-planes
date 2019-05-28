@@ -1,6 +1,6 @@
 class ElevatorConst:
 
-    NUM_OF_ELEVATORS = 1
+    NUM_OF_ELEVATORS = 2
 
     NUM_OF_FLOORS = 5
     NUM_OF_FLOORS_VERTICAL = 5

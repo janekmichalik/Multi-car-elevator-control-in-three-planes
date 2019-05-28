@@ -1,6 +1,6 @@
 import numpy as np
 
-from Program.elevator import ElevatorConst, Elevator
+from elevator import ElevatorConst, Elevator
 
 
 class Simulation:
@@ -12,7 +12,8 @@ class Simulation:
 
         self.elevators = []
         for elev in range(ElevatorConst.NUM_OF_ELEVATORS):
-            elev = Elevator()
+            id = len(self.elevators) + 1
+            elev = Elevator(id)
             self.elevators.append(elev)
 
         self.building_for_plot()

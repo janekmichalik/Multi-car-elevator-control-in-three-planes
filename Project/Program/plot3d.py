@@ -2,8 +2,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import animation
 
-from Program.constant import ElevatorConst
-from Program.simulation import Simulation
+from constant import ElevatorConst
+from simulation import Simulation
 from mpl_toolkits.mplot3d import Axes3D
 
 
@@ -24,10 +24,12 @@ class Plot(Simulation):
         self.x, self.y, self.z = None, None, None
 
         self.shrink_gaps()
+
         # Creating the Animation object
-        lenght = len(self.elevators[0].shortest_path)
-        self.t = self.elevators[0]
-        self.ani = animation.FuncAnimation(self.fig, self.update, lenght, interval=350, blit=False, repeat=True)
+        lenght_1 = len(self.elevators[0].shortest_path)
+        lenght_2 = len(self.elevators[1].shortest_path)
+        self.ani = animation.FuncAnimation(self.fig, self.update, lenght_1, interval=650, blit=False, repeat=True)
+        self.ani1 = animation.FuncAnimation(self.fig, self.update_2nd, lenght_2, interval=650, blit=False, repeat=True)
         self.draw_plot()
 
     def logs(self):
@@ -35,17 +37,18 @@ class Plot(Simulation):
         The functions that returns logs.
         :return: logs
         """
+        for elev in self.elevators:
+            print(f"Winda nr: {elev.id}")
+            print(f"Destination: ({elev.DESTINATION})")
+            print(f"Source: ({elev.SOURCE})")
 
-        print(f"Destination: ({self.t.DESTINATION})")
-        print(f"Source: ({self.t.SOURCE})")
-
-        path = self.t.shortest_path
-        print(len(path))
-        print(path)
-        if list(path[-1]) == self.t.DESTINATION:
-            print("Destination succeeded")
-        if path[0] == self.t.SOURCE:
-            print("Source succeeded")
+            path = elev.shortest_path
+            print(f"Dlugosc sciezki: {len(path)}")
+            print(f"Sciezka: {path}")
+            if list(path[-1]) == elev.DESTINATION:
+                print("Destination succeeded")
+            if path[0] == elev.SOURCE:
+                print("Source succeeded\n")
 
     def update(self, num):
         """
@@ -54,7 +57,8 @@ class Plot(Simulation):
         :return: plot animation
         """
         self.ax.cla()
-        point = self.t.shortest_path
+        elev = self.elevators[0]
+        point = elev.shortest_path
         floor, row, col = point[num]
 
         self.facecolors[row][col][floor] = '#ff99ff'
@@ -62,8 +66,31 @@ class Plot(Simulation):
 
         self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
                                      facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
-        if [floor, row, col] == self.t.DESTINATION:
+        if [floor, row, col] == elev.DESTINATION:
             self.facecolors[row][col][floor] = '#ff99ff4D'
+        elif [row, col] != ElevatorConst.SHAFT_3D:
+            self.facecolors[row][col][floor] = '#1f77b430'
+        else:
+            self.facecolors[row][col][floor] = '#ff000026'
+
+    def update_2nd(self, num):
+        """
+        The function which update the plot for every frame
+        :param num: iterations
+        :return: plot animation
+        """
+        self.ax.cla()
+        elev = self.elevators[1]
+        point = elev.shortest_path
+        floor, row, col = point[num]
+
+        self.facecolors[row][col][floor] = '#49fdb8'
+        self.fcolors_2 = self.explode(self.facecolors)
+
+        self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
+                                     facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
+        if [floor, row, col] == elev.DESTINATION:
+            self.facecolors[row][col][floor] = '#49fdb84D'
         elif [row, col] != ElevatorConst.SHAFT_3D:
             self.facecolors[row][col][floor] = '#1f77b430'
         else:
