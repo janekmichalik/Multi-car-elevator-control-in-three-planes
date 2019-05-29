@@ -28,12 +28,16 @@ class Simulation:
         for floor in range(ElevatorConst.NUM_OF_FLOORS):
             for row in range(ElevatorConst.NUM_OF_FLOORS_VERTICAL):
                 for col in range(ElevatorConst.NUM_OF_FLOORS_HORIZONTAL):
-                    if [row, col] == ElevatorConst.SHAFT_3D:
-                        self.facecolors[row][col][floor] = '#ff000026'
-                    elif [floor, row, col] == self.elevators[0].DESTINATION:
-                        self.facecolors[row][col][floor] = '#ff99ff4D'
-                    elif row % 2 == 0 and col % 2 == 0:
-                        self.facecolors[row][col][floor] = '#2952a3BF'
+                    for elev in self.elevators:
+                        if [row, col] == ElevatorConst.SHAFT_3D:
+                            self.facecolors[row][col][floor] = '#ff000026'
+                        elif [floor, row, col] == elev.DESTINATION:
+                            if elev.id == 1:
+                                self.facecolors[row][col][floor] = '#ff99ff4D'
+                            elif elev.id == 2:
+                                self.facecolors[row][col][floor] = '#42f4e24D'
+                        elif row % 2 == 0 and col % 2 == 0:
+                            self.facecolors[row][col][floor] = '#2952a3BF'
 
     def building_for_plot(self):
 
