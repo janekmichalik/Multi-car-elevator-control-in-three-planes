@@ -2,15 +2,16 @@ import random
 import collections
 import numpy as np
 
-from Program.constant import ElevatorConst
-from Program.floor import Floor
+from constant import ElevatorConst
+from floor import Floor
 
 
 class Elevator(Floor):
 
-    def __init__(self):
+    def __init__(self, id):
 
         super().__init__()
+        self.id = id
 
         self.source_x = 0
         self.source_y = 0
@@ -97,7 +98,13 @@ class Elevator(Floor):
         :return: source floor
         """
 
-        self.source_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
+        if self.id == 1:
+            self.source_flr = 0
+        else:
+            self.source_flr = 4
+
+        # zostanie zmienione po dodaniu kolejnej windy
+        # self.source_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
 
     def generate_ending_floor(self):
         """
@@ -105,7 +112,13 @@ class Elevator(Floor):
         :return: destination floor
         """
 
-        self.destination_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
+        if self.id == 1:
+            self.destination_flr = 0
+        else:
+            self.destination_flr = 4
+
+        # zostanie zmienione po dodaniu kolejnej windy
+        # self.destination_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
 
     def generate_starting_point(self):
         """
