@@ -81,12 +81,11 @@ class Elevator(Floor):
         if self.source_flr == self.destination_flr:
             self.shortest_path = self.compute_shortest_path(self.SOURCE, self.floors)
         else:
-            # WILL BE ADDED AFTER 'TWO SHAFTS' MODIFICATION
-            # if self.virtual_channel == 1:
-            #     destination = ElevatorConst.SHAFT_A
-            # else:
-            #     destination = ElevatorConst.SHAFT_D
-            self.path = self.compute_shortest_path(self.SOURCE, self.floors, destination=ElevatorConst.SHAFT)
+            if self.virtual_channel == 1:
+                destination = ElevatorConst.SHAFT_A
+            else:
+                destination = ElevatorConst.SHAFT_D
+            self.path = self.compute_shortest_path(self.SOURCE, self.floors, destination=destination)
 
             self.shortest_path.extend(self.path)
             source = [self.DESTINATION[0], self.path[-1][1], self.path[-1][2]]
@@ -112,8 +111,8 @@ class Elevator(Floor):
         :return: source floor
         """
 
-        if self.id == 1:
-            self.source_flr = 0
+        if self.id == 0:
+            self.source_flr = 3
         else:
             self.source_flr = 4
 
@@ -126,10 +125,10 @@ class Elevator(Floor):
         :return: destination floor
         """
 
-        if self.id == 1:
-            self.destination_flr = 0
-        else:
+        if self.id == 0:
             self.destination_flr = 4
+        else:
+            self.destination_flr = 3
 
         # zostanie zmienione po dodaniu kolejnej windy
         # self.destination_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
@@ -140,7 +139,12 @@ class Elevator(Floor):
         :return: source
         """
 
-        while self.floor[self.source_x][self.source_y] == ElevatorConst.WALL:
+        self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL - 1)
+        self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL - 1)
+
+        while self.floor[self.source_x][self.source_y] == ElevatorConst.WALL\
+                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_D \
+                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_A:
             self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL-1)
             self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL-1)
         self.source = [self.source_x, self.source_y]
@@ -152,8 +156,13 @@ class Elevator(Floor):
         :return: destination
         """
 
+        self.dest_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL - 1)
+        self.dest_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL - 1)
+
         while self.floor[self.dest_x][self.dest_y] == ElevatorConst.WALL \
-                and (self.source_x != self.dest_x or self.source_y != self.dest_y):
+                or (self.source_x == self.dest_x or self.source_y == self.dest_y) \
+                or self.floor[self.dest_x][self.dest_y] == ElevatorConst.SHAFT_D \
+                or self.floor[self.dest_x][self.dest_y] == ElevatorConst.SHAFT_A:
             self.dest_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL-1)
             self.dest_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL-1)
         self.destination = [self.dest_x, self.dest_y]

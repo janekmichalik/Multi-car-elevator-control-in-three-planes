@@ -1,6 +1,7 @@
 import numpy as np
 
-from elevator import ElevatorConst, Elevator
+from elevator import Elevator
+from constant import ElevatorConst
 
 
 class Simulation:
@@ -12,7 +13,7 @@ class Simulation:
 
         self.elevators = []
         for elev in range(ElevatorConst.NUM_OF_ELEVATORS):
-            id = len(self.elevators) + 1
+            id = len(self.elevators)
             elev = Elevator(id)
             self.elevators.append(elev)
 
@@ -29,12 +30,14 @@ class Simulation:
             for row in range(ElevatorConst.NUM_OF_FLOORS_VERTICAL):
                 for col in range(ElevatorConst.NUM_OF_FLOORS_HORIZONTAL):
                     for elev in self.elevators:
-                        if [row, col] == ElevatorConst.SHAFT_3D:
-                            self.facecolors[row][col][floor] = '#ff000026'
+                        if [row, col] == ElevatorConst.SHAFT_DESC:
+                            self.facecolors[row][col][floor] = '#00140d33'
+                        elif [row, col] == ElevatorConst.SHAFT_ASC:
+                            self.facecolors[row][col][floor] = '#ffffff33'
                         elif [floor, row, col] == elev.DESTINATION:
-                            if elev.id == 1:
+                            if elev.id == 0:
                                 self.facecolors[row][col][floor] = '#ff99ff4D'
-                            elif elev.id == 2:
+                            elif elev.id == 1:
                                 self.facecolors[row][col][floor] = '#42f4e24D'
                         elif row % 2 == 0 and col % 2 == 0:
                             self.facecolors[row][col][floor] = '#2952a3BF'

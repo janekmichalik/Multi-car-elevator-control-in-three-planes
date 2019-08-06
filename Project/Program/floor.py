@@ -26,8 +26,10 @@ class Floor:
 
         for row in range(ElevatorConst.NUM_OF_FLOORS_VERTICAL):
             for col in range(ElevatorConst.NUM_OF_FLOORS_HORIZONTAL):
-                if [row, col] == ElevatorConst.SHAFT_3D:
-                    self.floor[row][col] = ElevatorConst.SHAFT
+                if [row, col] == ElevatorConst.SHAFT_DESC:
+                    self.floor[row][col] = ElevatorConst.SHAFT_D
+                elif [row, col] == ElevatorConst.SHAFT_ASC:
+                    self.floor[row][col] = ElevatorConst.SHAFT_A
                 elif row % 2 == 0 and col % 2 == 0:
                     self.floor[row][col] = ElevatorConst.WALL
 
