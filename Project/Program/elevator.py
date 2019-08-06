@@ -29,11 +29,20 @@ class Elevator(Floor):
         self.generate_ending_floor()
         self.generate_starting_point()
         self.generate_ending_point()
+        self.get_virtual_channel()
 
         self.SOURCE = [self.source_flr, self.source_x, self.source_y]
         self.DESTINATION = [self.destination_flr, self.dest_x, self.dest_y]
 
         self.get_path()
+
+    def get_virtual_channel(self):
+        if self.source_flr > self.destination_flr:
+            self.virtual_channel = -1
+        elif self.source_flr < self.destination_flr:
+            self.virtual_channel = 1
+        else:
+            self.virtual_channel = 1
 
     def get_path_between_flrs(self):
         """
@@ -72,6 +81,11 @@ class Elevator(Floor):
         if self.source_flr == self.destination_flr:
             self.shortest_path = self.compute_shortest_path(self.SOURCE, self.floors)
         else:
+            # WILL BE ADDED AFTER 'TWO SHAFTS' MODIFICATION
+            # if self.virtual_channel == 1:
+            #     destination = ElevatorConst.SHAFT_A
+            # else:
+            #     destination = ElevatorConst.SHAFT_D
             self.path = self.compute_shortest_path(self.SOURCE, self.floors, destination=ElevatorConst.SHAFT)
 
             self.shortest_path.extend(self.path)
