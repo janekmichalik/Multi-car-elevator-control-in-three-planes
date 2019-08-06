@@ -140,7 +140,9 @@ class Elevator(Floor):
         :return: source
         """
 
-        while self.floor[self.source_x][self.source_y] == ElevatorConst.WALL:
+        while self.floor[self.source_x][self.source_y] == ElevatorConst.WALL\
+                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_D \
+                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_A:
             self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL-1)
             self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL-1)
         self.source = [self.source_x, self.source_y]
@@ -153,7 +155,9 @@ class Elevator(Floor):
         """
 
         while self.floor[self.dest_x][self.dest_y] == ElevatorConst.WALL \
-                and (self.source_x != self.dest_x or self.source_y != self.dest_y):
+                and (self.source_x != self.dest_x or self.source_y != self.dest_y) \
+                or self.floor[self.dest_x][self.dest_y] == ElevatorConst.SHAFT_D \
+                or self.floor[self.dest_x][self.dest_y] == ElevatorConst.SHAFT_A:
             self.dest_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL-1)
             self.dest_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL-1)
         self.destination = [self.dest_x, self.dest_y]

@@ -68,7 +68,7 @@ class Plot(Simulation):
                                      facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
         if [floor, row, col] == elev.DESTINATION:
             self.facecolors[row][col][floor] = '#ff99ff4D'
-        elif [row, col] != ElevatorConst.SHAFT_3D:
+        elif [row, col] != ElevatorConst.SHAFT_DESC or [row, col] != ElevatorConst.SHAFT_ASC:
             self.facecolors[row][col][floor] = '#1f77b430'
         else:
             self.facecolors[row][col][floor] = '#ff000026'
@@ -91,7 +91,7 @@ class Plot(Simulation):
                                      facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
         if [floor, row, col] == elev.DESTINATION:
             self.facecolors[row][col][floor] = '#49fdb84D'
-        elif [row, col] != ElevatorConst.SHAFT_3D:
+        elif [row, col] != ElevatorConst.SHAFT_DESC or [row, col] != ElevatorConst.SHAFT_ASC:
             self.facecolors[row][col][floor] = '#1f77b430'
         else:
             self.facecolors[row][col][floor] = '#ff000026'

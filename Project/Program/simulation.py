@@ -29,8 +29,10 @@ class Simulation:
             for row in range(ElevatorConst.NUM_OF_FLOORS_VERTICAL):
                 for col in range(ElevatorConst.NUM_OF_FLOORS_HORIZONTAL):
                     for elev in self.elevators:
-                        if [row, col] == ElevatorConst.SHAFT_3D:
-                            self.facecolors[row][col][floor] = '#ff000026'
+                        if [row, col] == ElevatorConst.SHAFT_DESC:
+                            self.facecolors[row][col][floor] = '#00140d33'
+                        elif [row, col] == ElevatorConst.SHAFT_ASC:
+                            self.facecolors[row][col][floor] = '#ffffff33'
                         elif [floor, row, col] == elev.DESTINATION:
                             if elev.id == 1:
                                 self.facecolors[row][col][floor] = '#ff99ff4D'
