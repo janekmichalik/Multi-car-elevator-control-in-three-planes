@@ -28,8 +28,8 @@ class Plot(Simulation):
         # Creating the Animation object
         lenght_1 = len(self.elevators[0].shortest_path)
         lenght_2 = len(self.elevators[1].shortest_path)
-        self.ani = animation.FuncAnimation(self.fig, self.update, lenght_1, interval=650, blit=False, repeat=True)
-        self.ani1 = animation.FuncAnimation(self.fig, self.update_2nd, lenght_2, interval=650, blit=False, repeat=True)
+        self.ani = animation.FuncAnimation(self.fig, self.update, lenght_1, interval=800, blit=False, repeat=True)
+        self.ani1 = animation.FuncAnimation(self.fig, self.update_2nd, lenght_2, interval=800, blit=False, repeat=True)
         self.draw_plot()
 
     def logs(self):

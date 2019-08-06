@@ -112,7 +112,7 @@ class Elevator(Floor):
         """
 
         if self.id == 0:
-            self.source_flr = 0
+            self.source_flr = 3
         else:
             self.source_flr = 4
 
@@ -126,7 +126,7 @@ class Elevator(Floor):
         """
 
         if self.id == 0:
-            self.destination_flr = 0
+            self.destination_flr = 4
         else:
             self.destination_flr = 3
 
