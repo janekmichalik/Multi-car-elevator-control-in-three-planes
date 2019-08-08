@@ -1,7 +1,7 @@
 import numpy as np
 
 from elevator import Elevator
-from constant import ElevatorConst
+from constant import ElevatorConst, ElevatorColors
 
 
 class Simulation:
@@ -31,16 +31,16 @@ class Simulation:
                 for col in range(ElevatorConst.NUM_OF_FLOORS_HORIZONTAL):
                     for elev in self.elevators:
                         if [row, col] == ElevatorConst.SHAFT_DESC:
-                            self.facecolors[row][col][floor] = '#00140d33'
+                            self.facecolors[row][col][floor] = ElevatorColors.SHAFT_DESC
                         elif [row, col] == ElevatorConst.SHAFT_ASC:
-                            self.facecolors[row][col][floor] = '#ffffff33'
+                            self.facecolors[row][col][floor] = ElevatorColors.SHAFT_ASC
                         elif [floor, row, col] == elev.DESTINATION:
                             if elev.id == 0:
-                                self.facecolors[row][col][floor] = '#ff99ff4D'
+                                self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
                             elif elev.id == 1:
-                                self.facecolors[row][col][floor] = '#42f4e24D'
+                                self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
                         elif row % 2 == 0 and col % 2 == 0:
-                            self.facecolors[row][col][floor] = '#2952a3BF'
+                            self.facecolors[row][col][floor] = ElevatorColors.WALL
 
     def building_for_plot(self):
 
