@@ -12,29 +12,34 @@ class Elevator(Floor):
 
         super().__init__()
         self.id = id
-
+        self.iterration_paths = []
         self.source_x = 0
         self.source_y = 0
         self.source_flr = 0
         self.source = [self.source_x, self.source_y]
-
-        self.shortest_path = []
-
-        self.dest_x = 0
-        self.dest_y = 0
-        self.destination_flr = 0
-        self.destination = [self.dest_x, self.dest_y]
-
         self.generate_starting_floor()
-        self.generate_ending_floor()
         self.generate_starting_point()
-        self.generate_ending_point()
-        self.get_virtual_channel()
-
         self.SOURCE = [self.source_flr, self.source_x, self.source_y]
-        self.DESTINATION = [self.destination_flr, self.dest_x, self.dest_y]
 
-        self.get_path()
+        counter = 0
+
+        while counter < ElevatorConst.NUM_OF_ITERATION:
+            start_point = self.SOURCE if counter is 0 else self.iterration_paths[counter-1][-1]
+            self.shortest_path = []
+
+            self.dest_x = 0
+            self.dest_y = 0
+            self.destination_flr = 0
+            self.destination = [self.dest_x, self.dest_y]
+
+            self.generate_ending_floor()
+            self.generate_ending_point(counter)
+            self.get_virtual_channel()
+            self.DESTINATION = [self.destination_flr, self.dest_x, self.dest_y]
+            self.get_path(start_point)
+            self.iterration_paths.append(self.shortest_path)
+
+            counter = counter + 1
 
     def get_virtual_channel(self):
         if self.source_flr > self.destination_flr:
@@ -44,53 +49,52 @@ class Elevator(Floor):
         else:
             self.virtual_channel = 1
 
-    def get_path_between_flrs(self):
+    def get_path_between_flrs(self, start_point):
         """
         The function that fulfill the shortest path with 3d coordinates on different floors
         :return: shortest pasth
         """
-        absolut = np.abs(self.SOURCE[0] - self.DESTINATION[0])
+        absolut = np.abs(start_point[0] - self.DESTINATION[0])
         if absolut >= 1:
             final_path = []
-            if self.SOURCE[0] > self.DESTINATION[0]:
-                if absolut == 2 and self.SOURCE[0] != 2:
+            if start_point[0] > self.DESTINATION[0]:
+                if absolut == 2 and start_point[0] != 2:
                     rng = [self.DESTINATION[0] + 1, absolut + 2]
                 else:
                     rng = [self.DESTINATION[0] + 1, absolut + 1]
             else:
-                if absolut == 2 and self.SOURCE[0] != 0:
-                    rng = [self.SOURCE[0] + 1, absolut + 2]
+                if absolut == 2 and start_point[0] != 0:
+                    rng = [start_point[0] + 1, absolut + 2]
                 else:
-                    rng = [self.SOURCE[0] + 1, absolut + 1]
+                    rng = [start_point[0] + 1, absolut + 1]
 
             for flr in range(rng[0], rng[1]):
                 _, y, z = self.path[-1]
                 common_path = [flr, y, z]
                 final_path.append(common_path)
 
-            if self.SOURCE[0] > self.DESTINATION[0]:
+            if start_point[0] > self.DESTINATION[0]:
                 final_path.reverse()
             self.shortest_path.extend(final_path)
 
-    def get_path(self):
+    def get_path(self, start_point):
         """
         The function that call 'compute_shortest_path' depending on source and destination floor
         :return: shortest path
         """
 
-        if self.source_flr == self.destination_flr:
-            self.shortest_path = self.compute_shortest_path(self.SOURCE, self.floors)
+        if start_point[0] == self.DESTINATION[0]:
+            self.shortest_path = self.compute_shortest_path(start_point, self.floors)
         else:
             if self.virtual_channel == 1:
                 destination = ElevatorConst.SHAFT_A
             else:
                 destination = ElevatorConst.SHAFT_D
-            self.path = self.compute_shortest_path(self.SOURCE, self.floors, destination=destination)
-
+            self.path = self.compute_shortest_path(start_point, self.floors, destination=destination)
             self.shortest_path.extend(self.path)
             source = [self.DESTINATION[0], self.path[-1][1], self.path[-1][2]]
             self.extend_path = self.compute_shortest_path(source, self.floors)
-            self.get_path_between_flrs()
+            self.get_path_between_flrs(start_point)
             self.shortest_path.extend(self.extend_path)
             self.list_remove_duplicates()
 
@@ -150,7 +154,7 @@ class Elevator(Floor):
         self.source = [self.source_x, self.source_y]
         self.floors[self.source_flr][self.source_x][self.source_y] = ElevatorConst.SOURCE
 
-    def generate_ending_point(self):
+    def generate_ending_point(self, counter):
         """
         The function that generate the ending point (destination) randomly.
         :return: destination
@@ -167,6 +171,11 @@ class Elevator(Floor):
             self.dest_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL-1)
         self.destination = [self.dest_x, self.dest_y]
         self.floors[self.destination_flr][self.dest_x][self.dest_y] = ElevatorConst.DESTINATION
+        if counter is not 0:
+            dz, dx, dy = self.iterration_paths[counter-1][-1]
+            sz, sx, sy = self.iterration_paths[counter-1][0]
+            self.floors[sz][sx][sy] = ElevatorConst.PATH
+            self.floors[dz][dx][dy] = ElevatorConst.SOURCE
 
     @staticmethod
     def compute_shortest_path(source, floors, destination=ElevatorConst.DESTINATION):
