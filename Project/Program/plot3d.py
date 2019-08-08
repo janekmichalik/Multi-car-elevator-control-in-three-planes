@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import animation
 
-from constant import ElevatorConst
+from constant import ElevatorConst, ElevatorColors, PlotConst
 from simulation import Simulation
 from mpl_toolkits.mplot3d import Axes3D
 
@@ -13,7 +13,7 @@ class Plot(Simulation):
         super().__init__()
 
         self.ax, self.voxels = None, None
-        self.fig = plt.figure()
+        self.fig = plt.figure(figsize=(10, 6))
         self.filled = np.ones(self.building.shape)
 
         # upscale the above voxel image, leaving gaps
@@ -61,21 +61,21 @@ class Plot(Simulation):
         point = elev.shortest_path
         floor, row, col = point[num]
 
-        self.facecolors[row][col][floor] = '#ff99ff'
+        self.facecolors[row][col][floor] = ElevatorColors.ELEVATOR[elev.id]
         self.fcolors_2 = self.explode(self.facecolors)
 
         self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
                                      facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
         if [floor, row, col] == elev.DESTINATION:
-            self.facecolors[row][col][floor] = '#ff99ff4D'
+            self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
         elif [row, col] != ElevatorConst.SHAFT_DESC and [row, col] != ElevatorConst.SHAFT_ASC:
-            self.facecolors[row][col][floor] = '#1f77b430'
+            self.facecolors[row][col][floor] = ElevatorColors.PATH
         else:
             if [row, col] == ElevatorConst.SHAFT_DESC:
-                color = '#00140d33'
+                color = ElevatorColors.SHAFT_DESC
                 self.facecolors[row][col][floor] = color
             else:
-                color = '#ffffff33'
+                color = ElevatorColors.SHAFT_ASC
                 self.facecolors[row][col][floor] = color
 
     def update_2nd(self, num):
@@ -89,21 +89,21 @@ class Plot(Simulation):
         point = elev.shortest_path
         floor, row, col = point[num]
 
-        self.facecolors[row][col][floor] = '#49fdb8'
+        self.facecolors[row][col][floor] = ElevatorColors.ELEVATOR[elev.id]
         self.fcolors_2 = self.explode(self.facecolors)
 
         self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
                                      facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
         if [floor, row, col] == elev.DESTINATION:
-            self.facecolors[row][col][floor] = '#49fdb84D'
+            self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
         elif [row, col] != ElevatorConst.SHAFT_DESC and [row, col] != ElevatorConst.SHAFT_ASC:
-            self.facecolors[row][col][floor] = '#1f77b430'
+            self.facecolors[row][col][floor] = ElevatorColors.PATH
         else:
             if [row, col] == ElevatorConst.SHAFT_DESC:
-                color = '#00140d33'
+                color = ElevatorColors.SHAFT_DESC
                 self.facecolors[row][col][floor] = color
             else:
-                color = '#ffffff33'
+                color = ElevatorColors.SHAFT_ASC
                 self.facecolors[row][col][floor] = color
 
     def shrink_gaps(self):
@@ -140,5 +140,6 @@ class Plot(Simulation):
         self.fig.canvas.set_window_title('Multi-car elevator control in three planes')
         self.ax = self.fig.gca(projection='3d')
         self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
-                       facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
+                                     facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
+        self.fig.legend(PlotConst.color_list, PlotConst.color_labels)
         plt.show()
