@@ -2,8 +2,7 @@ from plot3d import Plot
 
 
 def main():
-    simulation = Plot()
-    simulation.logs()
+    Plot(logger=False)
 
 
 main()

@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 class ElevatorConst:
 
     NUM_OF_ELEVATORS = 2
-    NUM_OF_ITERATION = 2
+    NUM_OF_ITERATION = 3
 
     NUM_OF_FLOORS = 5
     NUM_OF_FLOORS_VERTICAL = 5
@@ -24,13 +24,13 @@ class ElevatorConst:
 
 class ElevatorColors:
 
-    SHAFT_DESC = '#00140d33'
-    SHAFT_ASC = '#6a101033'
+    SHAFT_DESC = '#00140d1A'
+    SHAFT_ASC = '#6a10101A'
     WALL = '#2952a3'
     SHAFT_DESC_NO_TRANSPARECNY = '#00140d'
     SHAFT_ASC_NO_TRANSPARECNY = '#6a1010'
-    PATH = '#1f77b430'
-    DESTINATION = ['#ff99ff4D', '#42f4e24D']
+    PATH = '#1f77b41A'
+    DESTINATION = ['#ff99ff40', '#42f4e240']
     SOURCE = ['', '']
     ELEVATOR = ['#ff99ff', '#49fdb8']
 
