@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib import animation
-from itertools import cycle
 
 from constant import ElevatorConst, ElevatorColors, PlotConst
 from simulation import Simulation
