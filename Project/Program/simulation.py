@@ -21,7 +21,7 @@ class Simulation:
 
     def fulfill_building_floor(self):
 
-        self.facecolors = np.array([[['#1f77b430'] *
+        self.facecolors = np.array([[[ElevatorColors.PATH] *
                                      ElevatorConst.NUM_OF_FLOORS] *
                                     ElevatorConst.NUM_OF_FLOORS_VERTICAL] *
                                    ElevatorConst.NUM_OF_FLOORS_HORIZONTAL)
@@ -34,11 +34,6 @@ class Simulation:
                             self.facecolors[row][col][floor] = ElevatorColors.SHAFT_DESC
                         elif [row, col] == ElevatorConst.SHAFT_ASC:
                             self.facecolors[row][col][floor] = ElevatorColors.SHAFT_ASC
-                        elif [floor, row, col] == elev.DESTINATION:
-                            if elev.id == 0:
-                                self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
-                            elif elev.id == 1:
-                                self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
                         elif row % 2 == 0 and col % 2 == 0:
                             self.facecolors[row][col][floor] = ElevatorColors.WALL
 
@@ -49,7 +44,7 @@ class Simulation:
                                  ElevatorConst.NUM_OF_FLOORS_HORIZONTAL),
                                 dtype=int)
         self.fulfill_building_floor()
-        self.edgecolors  =np.array([[['#7D84A6'] *
+        self.edgecolors  =np.array([[[ElevatorColors.EDGE] *
                                      ElevatorConst.NUM_OF_FLOORS] *
                                     ElevatorConst.NUM_OF_FLOORS_VERTICAL] *
                                    ElevatorConst.NUM_OF_FLOORS_HORIZONTAL)

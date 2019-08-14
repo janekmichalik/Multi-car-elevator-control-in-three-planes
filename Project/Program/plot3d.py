@@ -9,8 +9,9 @@ from mpl_toolkits.mplot3d import Axes3D
 
 class Plot(Simulation):
 
-    def __init__(self):
+    def __init__(self, logger: bool = True):
         super().__init__()
+        self.logger = logger
 
         self.ax, self.voxels = None, None
         self.fig = plt.figure(figsize=(10, 6))
@@ -26,11 +27,17 @@ class Plot(Simulation):
         self.shrink_gaps()
 
         # Creating the Animation object
-        lenght_1 = len(self.elevators[0].shortest_path)
-        lenght_2 = len(self.elevators[1].shortest_path)
-        self.ani = animation.FuncAnimation(self.fig, self.update, lenght_1, interval=800, blit=False, repeat=True)
-        self.ani1 = animation.FuncAnimation(self.fig, self.update_2nd, lenght_2, interval=800, blit=False, repeat=True)
+        lenght = self.calculate_anim_steps()
+        self.ani = animation.FuncAnimation(self.fig, self.update, lenght,
+                                           init_func=self.init, interval=1000, blit=False, repeat=False)
         self.draw_plot()
+
+    def calculate_anim_steps(self):
+        tmp = []
+        for elev in self.elevators:
+            tmp.append(len(elev.final_path))
+        lenght = max(tmp)
+        return lenght
 
     def logs(self):
         """
@@ -41,14 +48,16 @@ class Plot(Simulation):
             print(f"Winda nr: {elev.id}")
             print(f"Destination: ({elev.DESTINATION})")
             print(f"Source: ({elev.SOURCE})")
+            print(f"finalpath: {elev.final_path}")
 
-            path = elev.shortest_path
-            print(f"Dlugosc sciezki: {len(path)}")
-            print(f"Sciezka: {path}")
-            if list(path[-1]) == elev.DESTINATION:
-                print("Destination succeeded")
-            if path[0] == elev.SOURCE:
-                print("Source succeeded\n")
+            for path in elev.iterration_paths:
+                print(f"Dlugosc sciezki: {len(path)}")
+                print(f"Sciezka: {path}")
+
+    def init(self):
+        for elev in self.elevators:
+            floor, row, col = elev.iterration_paths[0][-1]
+            self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
 
     def update(self, num):
         """
@@ -56,55 +65,45 @@ class Plot(Simulation):
         :param num: iterations
         :return: plot animation
         """
+        def get_next_item():
+            try:
+                return elev.iterration_paths[(elev.counter + 1)][-1]
+            except IndexError:
+                return None
         self.ax.cla()
-        elev = self.elevators[0]
-        point = elev.shortest_path
-        floor, row, col = point[num]
-
-        self.facecolors[row][col][floor] = ElevatorColors.ELEVATOR[elev.id]
-        self.fcolors_2 = self.explode(self.facecolors)
-
-        self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
-                                     facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
-        if [floor, row, col] == elev.DESTINATION:
-            self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
-        elif [row, col] != ElevatorConst.SHAFT_DESC and [row, col] != ElevatorConst.SHAFT_ASC:
-            self.facecolors[row][col][floor] = ElevatorColors.PATH
-        else:
-            if [row, col] == ElevatorConst.SHAFT_DESC:
-                color = ElevatorColors.SHAFT_DESC
-                self.facecolors[row][col][floor] = color
+        for elev in self.elevators:
+            point = elev.final_path
+            if len(self.elevators) is not 1:
+                itr = elev.id + 1 if elev.id == 0 else elev.id - 1
             else:
-                color = ElevatorColors.SHAFT_ASC
-                self.facecolors[row][col][floor] = color
+                itr = 0
+            if num < len(point):
+                floor, row, col = point[num]
 
-    def update_2nd(self, num):
-        """
-        The function which update the plot for every frame
-        :param num: iterations
-        :return: plot animation
-        """
-        self.ax.cla()
-        elev = self.elevators[1]
-        point = elev.shortest_path
-        floor, row, col = point[num]
+                self.facecolors[row][col][floor] = ElevatorColors.ELEVATOR[elev.id]
+                self.fcolors_2 = self.explode(self.facecolors)
+                self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
+                                             facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
+                pth_list = [floor, row, col]
+                # destynacja biezacej windy
+                dest = elev.iterration_paths[elev.counter][-1]
+                # destynacja nastepnej windy
+                new = get_next_item()
 
-        self.facecolors[row][col][floor] = ElevatorColors.ELEVATOR[elev.id]
-        self.fcolors_2 = self.explode(self.facecolors)
-
-        self.voxels = self.ax.voxels(self.x, self.y, self.z, self.filled_2,
-                                     facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
-        if [floor, row, col] == elev.DESTINATION:
-            self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
-        elif [row, col] != ElevatorConst.SHAFT_DESC and [row, col] != ElevatorConst.SHAFT_ASC:
-            self.facecolors[row][col][floor] = ElevatorColors.PATH
-        else:
-            if [row, col] == ElevatorConst.SHAFT_DESC:
-                color = ElevatorColors.SHAFT_DESC
-                self.facecolors[row][col][floor] = color
-            else:
-                color = ElevatorColors.SHAFT_ASC
-                self.facecolors[row][col][floor] = color
+                if pth_list == dest and new is not None:
+                    z, x, y = new
+                    self.facecolors[x][y][z] = ElevatorColors.DESTINATION[elev.id]
+                    self.facecolors[row][col][floor] = ElevatorColors.PATH
+                    elev.counter = elev.counter + 1
+                elif [row, col] != ElevatorConst.SHAFT_DESC and [row, col] != ElevatorConst.SHAFT_ASC:
+                    self.facecolors[row][col][floor] = ElevatorColors.PATH
+                else:
+                    if [row, col] == ElevatorConst.SHAFT_DESC:
+                        color = ElevatorColors.SHAFT_DESC
+                        self.facecolors[row][col][floor] = color
+                    else:
+                        color = ElevatorColors.SHAFT_ASC
+                        self.facecolors[row][col][floor] = color
 
     def shrink_gaps(self):
         """
@@ -143,3 +142,5 @@ class Plot(Simulation):
                                      facecolors=self.fcolors_2, edgecolors=self.ecolors_2)
         self.fig.legend(PlotConst.color_list, PlotConst.color_labels)
         plt.show()
+        if self.logger:
+            self.logs()
