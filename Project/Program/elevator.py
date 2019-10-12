@@ -118,7 +118,7 @@ class Elevator(Floor):
         if self.id == 0:
             self.source_flr = 4
         else:
-            self.source_flr = 3
+            self.source_flr = 4
 
         # zostanie zmienione po dodaniu kolejnej windy
         # self.source_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
@@ -130,7 +130,7 @@ class Elevator(Floor):
         """
 
         if self.id == 0:
-            self.destination_flr = random.randint(3, 4)
+            self.destination_flr = 4
         else:
             self.destination_flr = 4
 

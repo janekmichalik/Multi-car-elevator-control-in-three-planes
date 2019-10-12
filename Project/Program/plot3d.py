@@ -29,7 +29,7 @@ class Plot(Simulation):
         # Creating the Animation object
         lenght = self.calculate_anim_steps()
         self.ani = animation.FuncAnimation(self.fig, self.update, lenght,
-                                           init_func=self.init, interval=1000, blit=False, repeat=False)
+                                           init_func=self.init, interval=1000, blit=False, repeat=True)
         self.draw_plot()
 
     def calculate_anim_steps(self):
