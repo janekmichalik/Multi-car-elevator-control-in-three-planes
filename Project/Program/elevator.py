@@ -39,6 +39,7 @@ class Elevator(Floor):
         self.final_path = []
         for path in self.iterration_paths:
             self.final_path.extend(path)
+        pass
 
     def get_virtual_channel(self):
         if self.source_flr > self.destination_flr:

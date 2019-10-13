@@ -20,35 +20,40 @@ class Simulation:
             self.elevators.append(elev)
 
         # <----DO TESTOW---->
-        self.elevators[0].iterration_paths = [[[4,1,0], [4,1,1], [4,1,2], [4,1,3], [4,1,4]]]
-        self.elevators[1].iterration_paths = [[[4,2,1], [4,1,1], [4,0,1]]]
+        self.elevators[0].final_path = [
+            [4,1,0], [4,1,1], [4,1,2], [4,1,3], [4,1,4],
+            [4,1,3], [4,0,3]
+        ]
+        self.elevators[1].final_path = [
+            [4,2,1], [4,1,1], [4,0,1],
+            [4,1,1], [4,2,1], [4,3,1], [4,4,1]
+        ]
 
-        for num in range(ElevatorConst.NUM_OF_ITERATION):
-            elev1 = self.elevators[0].iterration_paths[num]
-            elev2 = self.elevators[1].iterration_paths[num]
-            lenght = min(len(elev1), len(elev2))
-            for pnt in range(lenght):
-                if elev1[pnt] == elev2[pnt]:
-                    jinx_id = random.randrange(ElevatorConst.NUM_OF_ELEVATORS)
-                    jinx_elev = self.elevators[jinx_id]
-                    not_jinx_id = int(not jinx_id)
-                    not_jinx_elev = self.elevators[not_jinx_id]
-                    
-                    # jesli obecny punkt pechowej windy nie znajduje sie w sciezce szczesliwej windy
-                    # - winda pechowa czeka
-                    if jinx_elev.iterration_paths[num][pnt-1] \
-                            not in not_jinx_elev.iterration_paths[num]:
-                        wait_point = jinx_elev.iterration_paths[num][pnt-1]
-                        wait_pint_index = jinx_elev.iterration_paths[num].index(wait_point)
-                        tmp = jinx_elev.iterration_paths[num]
-                        [tmp.insert(wait_pint_index, wait_point) for _ in range(2)]
+        elev1 = self.elevators[0].final_path
+        elev2 = self.elevators[1].final_path
+        lenght = min(len(elev1), len(elev2))
+        cnt = 0
+        for pnt in range(lenght):
+            if elev1[pnt] == elev2[pnt]:
+                jinx_id = 0 if cnt % 2 == 0 else 1
+                jinx_elev = self.elevators[jinx_id]
+                not_jinx_id = int(not jinx_id)
+                not_jinx_elev = self.elevators[not_jinx_id]
 
-
-                        jinx_elev.final_path = jinx_elev.iterration_paths[num]
-                        not_jinx_elev.final_path = not_jinx_elev.iterration_paths[num]
-
-                else:
-                    print("Brak punktow wspolnych")
+                # jesli obecny punkt pechowej windy nie znajduje sie w sciezce szczesliwej windy
+                # - winda pechowa czeka
+                t1 = jinx_elev.final_path[pnt-1]
+                t2 = not_jinx_elev.final_path
+                if jinx_elev.final_path[pnt-1] \
+                        not in not_jinx_elev.final_path:
+                    wait_point = jinx_elev.final_path[pnt-1]
+                    wait_pint_index = jinx_elev.final_path.index(wait_point)
+                    tmp = jinx_elev.final_path
+                    stops = 3 if wait_point == jinx_elev.DESTINATION else 2
+                    [tmp.insert(wait_pint_index, wait_point) for _ in range(stops)]
+                cnt = cnt + 1
+            else:
+                print("Brak punktow wspolnych")
 
 
         self.building_for_plot()
