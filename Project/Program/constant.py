@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 
 class ElevatorConst:
 
-    NUM_OF_ELEVATORS = 2
+    NUM_OF_ELEVATORS = 3
     NUM_OF_ITERATION = 2
 
     NUM_OF_FLOORS = 5
@@ -30,9 +30,9 @@ class ElevatorColors:
     SHAFT_DESC_NO_TRANSPARECNY = '#00140d'
     SHAFT_ASC_NO_TRANSPARECNY = '#6a1010'
     PATH = '#1f77b41A'
-    DESTINATION = ['#ff99ff40', '#42f4e240']
+    DESTINATION = ['#ff99ff40', '#42f4e240', '#f44e8540']
     SOURCE = ['', '']
-    ELEVATOR = ['#ff99ff', '#49fdb8']
+    ELEVATOR = ['#ff99ff', '#49fdb8', '#f44e85']
 
     EDGE = '#7D84A6'
 

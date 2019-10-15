@@ -21,36 +21,51 @@ class Simulation:
 
         # <----DO TESTOW---->
         self.elevators[0].final_path = [
-            [4,1,0], [4,1,1], [4,1,2], [4,1,3], [4,1,4],
-            [4,1,3], [4,0,3]
+            [4,4,3], [4,3,3], [4,3,2], [4,3,1], [4,3,0]
         ]
         self.elevators[1].final_path = [
-            [4,2,1], [4,1,1], [4,0,1],
-            [4,1,1], [4,2,1], [4,3,1], [4,4,1]
+            [4,2,3], [4,3,3], [4,3,2],[4,3,1], [4,4,1]
+        ]
+        self.elevators[2].final_path = [
+            [4,3,4], [4,3,3], [4,3,2], [4,3,1], [4,2,1]
         ]
 
         elev1 = self.elevators[0].final_path
         elev2 = self.elevators[1].final_path
-        lenght = min(len(elev1), len(elev2))
+        elev3 = self.elevators[2].final_path
+        lenght = min(len(elev1), len(elev2), len(elev3))
         cnt = 0
         for pnt in range(lenght):
-            if elev1[pnt] == elev2[pnt]:
-                jinx_id = 0 if cnt % 2 == 0 else 1
-                jinx_elev = self.elevators[jinx_id]
-                not_jinx_id = int(not jinx_id)
+            if elev1[pnt] == elev2[pnt] == elev3[pnt]:
+                if cnt % 2:
+                    jinx_ids = [0,1]
+                    not_jinx_id = 2
+                elif cnt % 3:
+                    jinx_ids = [1,2]
+                    not_jinx_id = 0
+                else:
+                    jinx_ids = [0,2]
+                    not_jinx_id = 1
+                jinx_elev1 = self.elevators[jinx_ids[0]]
+                jinx_elev2 = self.elevators[jinx_ids[1]]
                 not_jinx_elev = self.elevators[not_jinx_id]
 
                 # jesli obecny punkt pechowej windy nie znajduje sie w sciezce szczesliwej windy
                 # - winda pechowa czeka
-                t1 = jinx_elev.final_path[pnt-1]
-                t2 = not_jinx_elev.final_path
-                if jinx_elev.final_path[pnt-1] \
-                        not in not_jinx_elev.final_path:
-                    wait_point = jinx_elev.final_path[pnt-1]
-                    wait_pint_index = jinx_elev.final_path.index(wait_point)
-                    tmp = jinx_elev.final_path
-                    stops = 3 if wait_point == jinx_elev.DESTINATION else 2
-                    [tmp.insert(wait_pint_index, wait_point) for _ in range(stops)]
+                if (jinx_elev1.final_path[pnt-1]
+                    not in not_jinx_elev.final_path) and\
+                        (jinx_elev2.final_path[pnt-1] not in not_jinx_elev.final_path):
+                    wait_point1 = jinx_elev1.final_path[pnt-1]
+                    wait_point2 = jinx_elev2.final_path[pnt-1]
+                    wait_pint_index1 = jinx_elev1.final_path.index(wait_point1)
+                    wait_pint_index2 = jinx_elev2.final_path.index(wait_point2)
+
+                    tmp1 = jinx_elev1.final_path
+                    tmp2 = jinx_elev2.final_path
+                    stops1 = 3 if wait_point1 == jinx_elev1.DESTINATION else 2
+                    [tmp1.insert(wait_pint_index1, wait_point1) for _ in range(stops1)]
+                    stops2 = 4 if wait_point2 == jinx_elev2.DESTINATION else 3
+                    [tmp2.insert(wait_pint_index2, wait_point2) for _ in range(stops2)]
                 cnt = cnt + 1
             else:
                 print("Brak punktow wspolnych")

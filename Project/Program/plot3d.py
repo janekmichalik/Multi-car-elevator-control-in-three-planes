@@ -57,7 +57,7 @@ class Plot(Simulation):
     def init(self):
         for elev in self.elevators:
             floor, row, col = elev.iterration_paths[0][-1]
-            self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
+            # self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
 
     def update(self, num):
         """
