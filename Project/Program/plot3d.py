@@ -27,17 +27,10 @@ class Plot(Simulation):
         self.shrink_gaps()
 
         # Creating the Animation object
-        lenght = self.calculate_anim_steps()
-        self.ani = animation.FuncAnimation(self.fig, self.update, lenght,
-                                           init_func=self.init, interval=1000, blit=False, repeat=True)
+        self.ani = animation.FuncAnimation(self.fig, self.update, self.max_len,
+                                           init_func=self.init, interval=1000,
+                                           blit=False, repeat=False, save_count=self.max_len)
         self.draw_plot()
-
-    def calculate_anim_steps(self):
-        tmp = []
-        for elev in self.elevators:
-            tmp.append(len(elev.final_path))
-        lenght = max(tmp)
-        return lenght
 
     def logs(self):
         """

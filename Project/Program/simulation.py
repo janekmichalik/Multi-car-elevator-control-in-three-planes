@@ -19,6 +19,12 @@ class Simulation:
             elev = Elevator(id)
             self.elevators.append(elev)
 
+        self.max_len = self.calculate_anim_steps()
+        for elev in self.elevators:
+            num = self.max_len - len(elev.final_path)
+            [elev.final_path.insert(elev.final_path.index(elev.final_path[-1]),
+                                    elev.final_path[-1]) for _ in range(num)]
+
         # # <----DO TESTOW---->
         # self.elevators[0].final_path = [
         #     [4,4,3], [4,3,3], [4,3,2], [4,3,1], [4,3,0]
@@ -90,6 +96,13 @@ class Simulation:
 
 
         self.building_for_plot()
+
+    def calculate_anim_steps(self):
+        tmp = []
+        for elev in self.elevators:
+            tmp.append(len(elev.final_path))
+        self.max_len = max(tmp)
+        return self.max_len
 
     @staticmethod
     def waiter(jinx_elev, not_jinx_elev, pnt):

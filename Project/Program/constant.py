@@ -34,7 +34,7 @@ class ElevatorColors:
     SOURCE = ['', '']
     ELEVATOR = ['#ecff42', '#49fdb8', '#f44e85']
 
-    EDGE = '#7D84A6'
+    EDGE = '#c2c2c233'
 
 
 class PlotConst:

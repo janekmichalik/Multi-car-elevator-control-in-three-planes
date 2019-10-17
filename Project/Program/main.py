@@ -2,7 +2,6 @@ from plot3d import Plot
 
 
 def main():
-    Plot(logger=False)
-
+    plt = Plot(logger=False)
 
 main()
