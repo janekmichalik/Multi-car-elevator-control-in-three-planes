@@ -92,7 +92,7 @@ class Plot(Simulation):
 
                 if pth_list == dest and new is not None:
                     z, x, y = new
-                    self.facecolors[x][y][z] = ElevatorColors.DESTINATION[elev.id]
+                    # self.facecolors[x][y][z] = ElevatorColors.DESTINATION[elev.id]
                     self.facecolors[row][col][floor] = ElevatorColors.PATH
                     elev.counter = elev.counter + 1
                 elif [row, col] != ElevatorConst.SHAFT_DESC and [row, col] != ElevatorConst.SHAFT_ASC:

@@ -19,16 +19,16 @@ class Simulation:
             elev = Elevator(id)
             self.elevators.append(elev)
 
-        # <----DO TESTOW---->
-        self.elevators[0].final_path = [
-            [4,4,3], [4,3,3], [4,3,2], [4,3,1], [4,3,0]
-        ]
-        self.elevators[1].final_path = [
-            [4,2,3], [4,3,3], [4,3,2],[4,3,1], [4,4,1]
-        ]
-        self.elevators[2].final_path = [
-            [4,3,4], [4,3,3], [4,3,2], [4,3,1], [4,2,1]
-        ]
+        # # <----DO TESTOW---->
+        # self.elevators[0].final_path = [
+        #     [4,4,3], [4,3,3], [4,3,2], [4,3,1], [4,3,0]
+        # ]
+        # self.elevators[1].final_path = [
+        #     [4,2,3], [4,3,3], [4,3,2],[4,3,1], [4,4,1]
+        # ]
+        # self.elevators[2].final_path = [
+        #     [4,3,4], [4,3,3], [4,3,2], [4,3,1], [4,2,1]
+        # ]
 
         elev1 = self.elevators[0].final_path
         elev2 = self.elevators[1].final_path
@@ -66,12 +66,44 @@ class Simulation:
                     [tmp1.insert(wait_pint_index1, wait_point1) for _ in range(stops1)]
                     stops2 = 4 if wait_point2 == jinx_elev2.DESTINATION else 3
                     [tmp2.insert(wait_pint_index2, wait_point2) for _ in range(stops2)]
-                cnt = cnt + 1
+            elif elev1[pnt] == elev2[pnt]:
+                jinx_id = 0 if cnt % 2 == 0 else 1
+                jinx_elev = self.elevators[jinx_id]
+                not_jinx_id = int(not jinx_id)
+                not_jinx_elev = self.elevators[not_jinx_id]
+                self.waiter(jinx_elev=jinx_elev, not_jinx_elev=not_jinx_elev, pnt=pnt)
+            elif elev1[pnt] == elev3[pnt]:
+                jinx_id = 0 if cnt % 2 == 0 else 2
+                jinx_elev = self.elevators[jinx_id]
+                not_jinx_id = int(not jinx_id)
+                not_jinx_elev = self.elevators[not_jinx_id]
+                self.waiter(jinx_elev=jinx_elev, not_jinx_elev=not_jinx_elev, pnt=pnt)
+            elif elev2[pnt] == elev3[pnt]:
+                jinx_id = 1 if cnt % 2 == 0 else 2
+                jinx_elev = self.elevators[jinx_id]
+                not_jinx_id = int(not jinx_id)
+                not_jinx_elev = self.elevators[not_jinx_id]
+                self.waiter(jinx_elev=jinx_elev, not_jinx_elev=not_jinx_elev, pnt=pnt)
             else:
                 print("Brak punktow wspolnych")
+            cnt = cnt + 1
 
 
         self.building_for_plot()
+
+    @staticmethod
+    def waiter(jinx_elev, not_jinx_elev, pnt):
+
+        # jesli obecny punkt pechowej windy nie znajduje sie w sciezce szczesliwej windy
+        # - winda pechowa czeka
+        if jinx_elev.final_path[pnt - 1] \
+                not in not_jinx_elev.final_path:
+            wait_point = jinx_elev.final_path[pnt - 1]
+            wait_pint_index = jinx_elev.final_path.index(wait_point)
+            tmp = jinx_elev.final_path
+            stops = 3 if wait_point == jinx_elev.DESTINATION else 2
+            [tmp.insert(wait_pint_index, wait_point) for _ in range(stops)]
+        return
 
     def fulfill_building_floor(self):
 
