@@ -5,6 +5,8 @@ import numpy as np
 from constant import ElevatorConst
 from floor import Floor
 
+SOURCE = []
+
 
 class Elevator(Floor):
 
@@ -146,10 +148,13 @@ class Elevator(Floor):
 
         self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL - 1)
         self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL - 1)
+        global SOURCE
+        SOURCE.append([self.source_x, self.source_y])
 
         while self.floor[self.source_x][self.source_y] == ElevatorConst.WALL\
                 or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_D \
-                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_A:
+                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_A\
+                or [self.source_x, self.source_y] in SOURCE:
             self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL-1)
             self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL-1)
         self.floors[self.source_flr][self.source_x][self.source_y] = ElevatorConst.SOURCE
@@ -208,6 +213,6 @@ class Elevator(Floor):
                 return shortest_path
             for x2, y2 in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
                 if 0 <= x2 < ElevatorConst.NUM_OF_FLOORS_VERTICAL and 0 <= y2 < ElevatorConst.NUM_OF_FLOORS_HORIZONTAL \
-                        and floor[y2][x2] != ElevatorConst.WALL and [x2, y2] not in seen:
+                        and floor[x2][y2] != ElevatorConst.WALL and [x2, y2] not in seen:
                     queue.append(shortest_path + [[flr, x2, y2]])
                     seen.append([x2, y2])

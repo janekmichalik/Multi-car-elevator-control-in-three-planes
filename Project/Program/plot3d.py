@@ -29,7 +29,7 @@ class Plot(Simulation):
         # Creating the Animation object
         self.ani = animation.FuncAnimation(self.fig, self.update, self.max_len,
                                            init_func=self.init, interval=1000,
-                                           blit=False, repeat=False, save_count=self.max_len)
+                                           blit=False, repeat=True, save_count=self.max_len)
         self.draw_plot()
 
     def logs(self):
@@ -39,13 +39,14 @@ class Plot(Simulation):
         """
         for elev in self.elevators:
             print(f"Winda nr: {elev.id}")
-            print(f"Destination: ({elev.DESTINATION})")
-            print(f"Source: ({elev.SOURCE})")
+            print(f"Destination: ({elev.final_path[-1]})")
+            # print(f"Source: ({elev.SOURCE})")
             print(f"finalpath: {elev.final_path}")
+            print(f"animacja kroki: {self.max_len}")
 
-            for path in elev.iterration_paths:
-                print(f"Dlugosc sciezki: {len(path)}")
-                print(f"Sciezka: {path}")
+            # for path in elev.iterration_paths:
+            #     print(f"Dlugosc sciezki: {len(path)}")
+            #     print(f"Sciezka: {path}")
 
     def init(self):
         for elev in self.elevators:
