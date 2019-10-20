@@ -1,7 +1,9 @@
 from constant import ElevatorConst
 
+POINT = []
 
-def waiter_two_elev(jinx_elev, not_jinx_elev, pnt):
+
+def waiter_two_elev(jinx_elev, not_jinx_elev, pnt, reversed):
 
     # jesli obecny punkt pechowej windy nie znajduje sie w sciezce szczesliwej windy
     # - winda pechowa czeka
@@ -14,7 +16,7 @@ def waiter_two_elev(jinx_elev, not_jinx_elev, pnt):
         [tmp.insert(wait_pint_index, wait_point) for _ in range(stops)]
         return jinx_elev.final_path, not_jinx_elev.final_path
     else:
-        return get_hide(jinx_elev=jinx_elev, not_jinx_elev=not_jinx_elev, pnt=pnt)
+        return get_hide(jinx_elev=jinx_elev, not_jinx_elev=not_jinx_elev, pnt=pnt, reversed=reversed)
 
 
 def waiter_three_elev(cnt, elevators, pnt):
@@ -52,77 +54,88 @@ def waiter_three_elev(cnt, elevators, pnt):
         return get_hide_three_elev(jinx_elev1=jinx_elev1, jinx_elev2=jinx_elev2, not_jinx_elev=not_jinx_elev, pnt=pnt)
 
 
-def get_hide(jinx_elev, not_jinx_elev, pnt):
+def get_hide(jinx_elev, not_jinx_elev, pnt, reversed):
     new_index = -1
-
-    jinx_curr_pnt = jinx_elev.final_path[pnt]
-    index = jinx_elev.final_path.index(jinx_curr_pnt)
+    
     ilosc = []
-    common_points = min(len(jinx_elev.final_path), len(not_jinx_elev.final_path))
-    for num in range(index, common_points):
+    # dlugosc najkrotszej sciezki do liczenia wspolnych punktow
+    amount_for_common_points = min(len(jinx_elev.final_path), len(not_jinx_elev.final_path))
+    # liczenie wspolnych punktow
+    for num in range(pnt, amount_for_common_points):
         if jinx_elev.final_path[num] == not_jinx_elev.final_path[num]:
             ilosc.append(num)
+    # punkt - schowek
     hiding_pnt = jinx_elev.final_path[pnt - 1]
-    before_hiding_pnt = jinx_elev.final_path[pnt - 1]
+    # punkt - zapamietany schowek
+    previous_hiding_pnt = hiding_pnt
 
-    not_jinx_curr_pnt = not_jinx_elev.final_path[pnt]
-    not_index = not_jinx_elev.final_path.index(not_jinx_curr_pnt)
-    not_rest_path = not_jinx_elev.final_path[not_index::]
-    correct_pnt = int(jinx_elev.floor[hiding_pnt[1]][hiding_pnt[2]])
-    cond = correct_pnt == ElevatorConst.WALL or\
-           (hiding_pnt in not_rest_path or hiding_pnt == jinx_elev.final_path[index - 1])
-    while cond:
-        hiding_pnt = [before_hiding_pnt[0], before_hiding_pnt[1] - 1, before_hiding_pnt[2]]
-        if 0 <= hiding_pnt[1] < 5 and 0 <= hiding_pnt[2] < 5:
-            correct_pnt = int(jinx_elev.floor[hiding_pnt[1]][hiding_pnt[2]])
-            cond = correct_pnt == ElevatorConst.WALL or \
-                   (hiding_pnt in not_rest_path or hiding_pnt == jinx_elev.final_path[index - 1])
-        else:
-            cond = True
-        if not cond:
-            break
-        hiding_pnt = [before_hiding_pnt[0], before_hiding_pnt[1] + 1, before_hiding_pnt[2]]
-        if 0 <= hiding_pnt[1] < 5 and 0 <= hiding_pnt[2] < 5:
-            correct_pnt = int(jinx_elev.floor[hiding_pnt[1]][hiding_pnt[2]])
-            cond = correct_pnt == ElevatorConst.WALL or (
-                    hiding_pnt in not_rest_path or hiding_pnt == jinx_elev.final_path[index - 1])
-        else:
-            cond = True
-        if not cond:
-            break
-        hiding_pnt = [before_hiding_pnt[0], before_hiding_pnt[1], before_hiding_pnt[2] + 1]
-        if 0 <= hiding_pnt[1] < 5 and 0 <= hiding_pnt[2] < 5:
-            correct_pnt = int(jinx_elev.floor[hiding_pnt[1]][hiding_pnt[2]])
-            cond = correct_pnt == ElevatorConst.WALL or (
-                    hiding_pnt in not_rest_path or hiding_pnt == jinx_elev.final_path[index - 1])
-        else:
-            cond = True
-        if not cond:
-            break
-        hiding_pnt = [before_hiding_pnt[0], before_hiding_pnt[1], before_hiding_pnt[2] - 1]
-        if 0 <= hiding_pnt[1] < 5 and 0 <= hiding_pnt[2] < 5:
-            correct_pnt = int(jinx_elev.floor[hiding_pnt[1]][hiding_pnt[2]])
-            cond = correct_pnt == ElevatorConst.WALL or (
-                    hiding_pnt in not_rest_path or hiding_pnt == jinx_elev.final_path[index - 1])
-        else:
-            cond = True
-        if not cond:
-            break
-        else:
-            before_hiding_pnt = hiding_pnt
-            new_index = jinx_elev.final_path.index(jinx_elev.DESTINATION) - 1
-            jinx_elev.final_path.insert(new_index, hiding_pnt)
+    not_rest_path = not_jinx_elev.final_path[pnt - 1]
 
-    if not_jinx_elev.final_path[pnt] == jinx_elev.final_path[-1]:
-        get_hide(jinx_elev=not_jinx_elev, not_jinx_elev=jinx_elev, pnt=pnt)
+    cond = True
+
+    steps_for_while = 0
+    while cond and steps_for_while < 4:
+        # zwraca liste mozliwych schowkow
+        hiding_pnts = get_hiden_points(previous_hiding_pnt, jinx_elev, jinx_elev.final_path[pnt-1])
+        for point in hiding_pnts:
+            if _check_cond(jinx_elev, not_rest_path, point, pnt):
+                hiding_pnt = point
+                steps_for_while = 4
+                global POINT
+                POINT.append(hiding_pnt)
+                break
+            else:
+                previous_hiding_pnt = point
+                new_index = jinx_elev.final_path.index(jinx_elev.DESTINATION) + 2
+                jinx_elev.final_path.insert(new_index, point)
+                break
+
+        steps_for_while = steps_for_while + 1
+
     if new_index is -1:
-        new_index = jinx_elev.final_path.index(before_hiding_pnt)
+        new_index = jinx_elev.final_path.index(previous_hiding_pnt)
     jinx_elev.final_path.insert(new_index + 1, hiding_pnt)
-    [jinx_elev.final_path.insert(new_index + 1, hiding_pnt) for _ in range(2)]
-    jinx_elev.final_path.insert(new_index + 4, before_hiding_pnt)
+    if not reversed:
+        [jinx_elev.final_path.insert(new_index + 1, hiding_pnt) for _ in range(2)]
+        jinx_elev.final_path.insert(new_index + 4, previous_hiding_pnt)
     lng = len(jinx_elev.final_path) - len(not_jinx_elev.final_path)
     [not_jinx_elev.final_path.insert(-1, not_jinx_elev.final_path[-1]) for _ in range(lng)]
+
+    if reversed:
+        num = jinx_elev.final_path[new_index+2:].count(jinx_elev.DESTINATION)
+        jinx_elev.final_path[new_index + 2:] = num*[hiding_pnt]
     return jinx_elev.final_path, not_jinx_elev.final_path
+
+
+def _check_cond(jinx_elev, not_rest_path, hiding_pnt, pnt):
+    # sprawdzenie czy pierwszy punkt - schowek nie jest sciana
+    is_not_wall = int(jinx_elev.floor[hiding_pnt[1]][hiding_pnt[2]])
+    # warunek prawidlowego punktu-schowka:
+    # nie jest sciana, nie zawiera sie w sciezce windy niechowajacej, nie jest punktem koncowym windy chowajacej
+    cond = is_not_wall != ElevatorConst.WALL and \
+           (hiding_pnt != not_rest_path and hiding_pnt != jinx_elev.final_path[pnt - 1]) and hiding_pnt not in POINT
+    return cond
+
+
+def get_hiden_points(curr_pnt, jinx_elev, prev):
+    hidden_points = [
+                        [curr_pnt[0], curr_pnt[1], curr_pnt[2] - 1],
+                        [curr_pnt[0], curr_pnt[1], curr_pnt[2] + 1],
+                        [curr_pnt[0], curr_pnt[1] - 1, curr_pnt[2]],
+                        [curr_pnt[0], curr_pnt[1] + 1, curr_pnt[2]]
+                    ]
+    new = []
+    for pnt in hidden_points:
+        if not (0 <= pnt[1] < 5 and 0 <= pnt[2] < 5):
+            new.append(pnt)
+        elif int(jinx_elev.floor[pnt[1]][pnt[2]]) == ElevatorConst.WALL:
+            new.append(pnt)
+        elif pnt in POINT:
+            new.append(pnt)
+        elif pnt == prev:
+            new.append(pnt)
+    tmp = [pkt for pkt in hidden_points if pkt not in new]
+    return tmp
 
 
 def get_hide_three_elev(jinx_elev1, jinx_elev2, not_jinx_elev, pnt):
@@ -133,11 +146,11 @@ def get_hide_three_elev(jinx_elev1, jinx_elev2, not_jinx_elev, pnt):
     index1 = jinx_elev1.final_path.index(jinx1_curr_pnt)
     index2 = jinx_elev2.final_path.index(jinx2_curr_pnt)
     ilosc1, ilosc2 = [], []
-    common_points = min(len(jinx_elev1.final_path), len(jinx_elev2.final_path), len(not_jinx_elev.final_path))
-    for num in range(index1, common_points):
+    amount_for_common_points = min(len(jinx_elev1.final_path), len(jinx_elev2.final_path), len(not_jinx_elev.final_path))
+    for num in range(index1, amount_for_common_points):
         if jinx_elev1.final_path[num] == not_jinx_elev.final_path[num]:
             ilosc1.append(num)
-    for num in range(index2, common_points):
+    for num in range(index2, amount_for_common_points):
         if jinx_elev2.final_path[num] == not_jinx_elev.final_path[num]:
             ilosc2.append(num)
 

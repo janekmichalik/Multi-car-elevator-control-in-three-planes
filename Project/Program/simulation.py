@@ -20,14 +20,15 @@ class Simulation:
             id = len(self.elevators)
             elev = Elevator(id)
             self.elevators.append(elev)
+            print("ELEV{}: {}".format(id, elev.final_path))
 
         self.max_len = self.calculate_anim_steps()
 
         # <----DO TESTOW---->
         # czekanie
-        self.elevators[0].final_path = [[4, 3, 2], [4, 3, 3], [4, 2, 3], [4, 1, 3], [4, 1, 4]]
-        self.elevators[1].final_path = [[4, 1, 4], [4, 1, 3], [4, 1, 2], [4, 1, 1], [4, 0, 1]]
-        self.elevators[2].final_path = [[4, 3, 3], [4, 2, 3], [4, 1, 3], [4, 1, 2], [4, 1, 1], [4, 0, 1]]
+        self.elevators[0].final_path = [[4, 3, 4], [4, 3, 3], [4, 2, 3], [4, 1, 3], [4, 0, 3]]
+        self.elevators[1].final_path = [[4, 3, 2], [4, 3, 1], [4, 2, 1], [4, 1, 1], [4, 0, 1]]
+        self.elevators[2].final_path = [[4, 1, 4], [4, 1, 3], [4, 0, 3]]
 
         self.elevators[0].DESTINATION = self.elevators[0].final_path[-1]
         self.elevators[1].DESTINATION = self.elevators[1].final_path[-1]
@@ -41,7 +42,8 @@ class Simulation:
         self.elev2 = self.elevators[1].final_path
         self.elev3 = self.elevators[2].final_path
         global LEN
-        LEN = min(len(self.elev1), len(self.elev2), len(self.elev3))
+        LEN = max(len(self.elev1), len(self.elev2), len(self.elev3)) - 1
+        tmp = LEN
         cnt = 0
         pnt = 0
         lenn = 0
@@ -73,15 +75,30 @@ class Simulation:
             elif self.elev1[pnt] == self.elev2[pnt]:
                 jinx_id = 0 if cnt % 2 == 0 else 1
                 not_jinx_id = 1 if jinx_id == 0 else 0
-                lenn = self.short_for_wait(jinx_id, not_jinx_id, cnt, pnt=pnt)
+                jinx_elev = self.elevators[jinx_id]
+                not_jinx_elev = self.elevators[not_jinx_id]
+                lenn = self.short_for_wait(jinx_elev, not_jinx_elev, cnt, pnt, elevA=self.elev1, elevB=self.elev2)
+                if not_jinx_elev.final_path[pnt] == not_jinx_elev.final_path[pnt - 1]:
+                    lenn = self.short_for_wait(not_jinx_elev, jinx_elev, cnt, pnt,
+                                               reversed=True, elevA=self.elev1, elevB=self.elev2)
             elif self.elev1[pnt] == self.elev3[pnt]:
                 jinx_id = 0 if cnt % 2 == 0 else 2
                 not_jinx_id = 2 if jinx_id == 0 else 0
-                lenn = self.short_for_wait(jinx_id, not_jinx_id, cnt, pnt=pnt)
+                jinx_elev = self.elevators[jinx_id]
+                not_jinx_elev = self.elevators[not_jinx_id]
+                lenn = self.short_for_wait(jinx_elev, not_jinx_elev, cnt, pnt, elevA=self.elev1, elevB=self.elev3)
+                if not_jinx_elev.final_path[pnt] == not_jinx_elev.final_path[pnt - 1]:
+                    lenn = self.short_for_wait(not_jinx_elev, jinx_elev, cnt, pnt,
+                                               reversed=True, elevA=self.elev1, elevB=self.elev3)
             elif self.elev2[pnt] == self.elev3[pnt]:
                 jinx_id = 1 if cnt % 2 == 0 else 2
                 not_jinx_id = 2 if jinx_id == 0 else 1
-                lenn = self.short_for_wait(jinx_id, not_jinx_id, cnt, pnt=pnt)
+                jinx_elev = self.elevators[jinx_id]
+                not_jinx_elev = self.elevators[not_jinx_id]
+                lenn = self.short_for_wait(jinx_elev, not_jinx_elev, cnt, pnt, elevA=self.elev2, elevB=self.elev3)
+                if not_jinx_elev.final_path[pnt] == not_jinx_elev.final_path[pnt - 1]:
+                    lenn = self.short_for_wait(not_jinx_elev, jinx_elev, cnt, pnt,
+                                               reversed=True, elevA=self.elev2, elevB=self.elev3)
             else:
                 print("Brak punktow wspolnych")
             self.max_len = self.calculate_anim_steps()
@@ -94,16 +111,15 @@ class Simulation:
 
         self.building_for_plot()
 
-    def short_for_wait(self, jinx_id, not_jinx_id, cnt, pnt):
-        jinx_elev = self.elevators[jinx_id]
-        not_jinx_elev = self.elevators[not_jinx_id]
-        jinx, not_jinx = waiter_two_elev(jinx_elev=jinx_elev, not_jinx_elev=not_jinx_elev, pnt=pnt)
+    @staticmethod
+    def short_for_wait(jinx_elev, not_jinx_elev, cnt, pnt, elevA, elevB, reversed=False):
+        jinx, not_jinx = waiter_two_elev(jinx_elev=jinx_elev, not_jinx_elev=not_jinx_elev, pnt=pnt, reversed=reversed)
         if cnt % 2 == 0:
-            self.elev1 = jinx
-            self.elev2 = not_jinx
+            elevA = jinx
+            elevB = not_jinx
         else:
-            self.elev2 = jinx
-            self.elev1 = not_jinx
+            elevA = jinx
+            elevB = not_jinx
         return min(len(jinx), len(not_jinx))
 
     def calculate_anim_steps(self):
