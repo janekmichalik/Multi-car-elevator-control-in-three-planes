@@ -27,17 +27,9 @@ class Plot(Simulation):
         self.shrink_gaps()
 
         # Creating the Animation object
-        lenght = self.calculate_anim_steps()
-        self.ani = animation.FuncAnimation(self.fig, self.update, lenght,
-                                           init_func=self.init, interval=1000, blit=False, repeat=False)
+        self.ani = animation.FuncAnimation(self.fig, self.update, self.max_len, interval=1000,
+                                           blit=False, repeat=True, save_count=self.max_len)
         self.draw_plot()
-
-    def calculate_anim_steps(self):
-        tmp = []
-        for elev in self.elevators:
-            tmp.append(len(elev.final_path))
-        lenght = max(tmp)
-        return lenght
 
     def logs(self):
         """
@@ -46,18 +38,9 @@ class Plot(Simulation):
         """
         for elev in self.elevators:
             print(f"Winda nr: {elev.id}")
-            print(f"Destination: ({elev.DESTINATION})")
+            print(f"Destination: ({elev.final_path[-1]})")
             print(f"Source: ({elev.SOURCE})")
-            print(f"finalpath: {elev.final_path}")
-
-            for path in elev.iterration_paths:
-                print(f"Dlugosc sciezki: {len(path)}")
-                print(f"Sciezka: {path}")
-
-    def init(self):
-        for elev in self.elevators:
-            floor, row, col = elev.iterration_paths[0][-1]
-            self.facecolors[row][col][floor] = ElevatorColors.DESTINATION[elev.id]
+            print(f"Path: {elev.final_path}")
 
     def update(self, num):
         """
@@ -73,10 +56,6 @@ class Plot(Simulation):
         self.ax.cla()
         for elev in self.elevators:
             point = elev.final_path
-            if len(self.elevators) is not 1:
-                itr = elev.id + 1 if elev.id == 0 else elev.id - 1
-            else:
-                itr = 0
             if num < len(point):
                 floor, row, col = point[num]
 
@@ -91,8 +70,6 @@ class Plot(Simulation):
                 new = get_next_item()
 
                 if pth_list == dest and new is not None:
-                    z, x, y = new
-                    self.facecolors[x][y][z] = ElevatorColors.DESTINATION[elev.id]
                     self.facecolors[row][col][floor] = ElevatorColors.PATH
                     elev.counter = elev.counter + 1
                 elif [row, col] != ElevatorConst.SHAFT_DESC and [row, col] != ElevatorConst.SHAFT_ASC:

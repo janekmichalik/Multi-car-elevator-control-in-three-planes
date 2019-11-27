@@ -5,6 +5,8 @@ import numpy as np
 from constant import ElevatorConst
 from floor import Floor
 
+SOURCEs = []
+
 
 class Elevator(Floor):
 
@@ -39,6 +41,11 @@ class Elevator(Floor):
         self.final_path = []
         for path in self.iterration_paths:
             self.final_path.extend(path)
+
+        self.copy_final_path = []
+        for path in self.iterration_paths:
+            path.insert(path.index(path[-1]), path[-1])
+            self.copy_final_path.extend(path)
 
     def get_virtual_channel(self):
         if self.source_flr > self.destination_flr:
@@ -118,10 +125,7 @@ class Elevator(Floor):
         if self.id == 0:
             self.source_flr = 4
         else:
-            self.source_flr = 3
-
-        # zostanie zmienione po dodaniu kolejnej windy
-        # self.source_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
+            self.source_flr = 4
 
     def generate_ending_floor(self):
         """
@@ -130,12 +134,9 @@ class Elevator(Floor):
         """
 
         if self.id == 0:
-            self.destination_flr = random.randint(3, 4)
+            self.destination_flr = 4
         else:
             self.destination_flr = 4
-
-        # zostanie zmienione po dodaniu kolejnej windy
-        # self.destination_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
 
     def generate_starting_point(self):
         """
@@ -145,10 +146,13 @@ class Elevator(Floor):
 
         self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL - 1)
         self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL - 1)
+        global SOURCEs
+        SOURCEs.append([self.source_x, self.source_y])
 
-        while self.floor[self.source_x][self.source_y] == ElevatorConst.WALL\
-                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_D \
-                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_A:
+        while self.floor[self.source_x][self.source_y] != ElevatorConst.WALL\
+                and self.floor[self.source_x][self.source_y] != ElevatorConst.SHAFT_D \
+                and self.floor[self.source_x][self.source_y] != ElevatorConst.SHAFT_A\
+                and [self.source_x, self.source_y] not in SOURCEs:
             self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL-1)
             self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL-1)
         self.floors[self.source_flr][self.source_x][self.source_y] = ElevatorConst.SOURCE
@@ -207,6 +211,6 @@ class Elevator(Floor):
                 return shortest_path
             for x2, y2 in ((x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)):
                 if 0 <= x2 < ElevatorConst.NUM_OF_FLOORS_VERTICAL and 0 <= y2 < ElevatorConst.NUM_OF_FLOORS_HORIZONTAL \
-                        and floor[y2][x2] != ElevatorConst.WALL and [x2, y2] not in seen:
+                        and floor[x2][y2] != ElevatorConst.WALL and [x2, y2] not in seen:
                     queue.append(shortest_path + [[flr, x2, y2]])
                     seen.append([x2, y2])
