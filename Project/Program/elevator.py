@@ -127,9 +127,6 @@ class Elevator(Floor):
         else:
             self.source_flr = 4
 
-        # zostanie zmienione po dodaniu kolejnej windy
-        # self.source_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
-
     def generate_ending_floor(self):
         """
         The function that generates the ending floor (destination) randomly.
@@ -140,9 +137,6 @@ class Elevator(Floor):
             self.destination_flr = 4
         else:
             self.destination_flr = 4
-
-        # zostanie zmienione po dodaniu kolejnej windy
-        # self.destination_flr = random.randint(0, ElevatorConst.NUM_OF_FLOORS - 1)
 
     def generate_starting_point(self):
         """

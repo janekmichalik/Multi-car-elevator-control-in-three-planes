@@ -2,7 +2,7 @@ import numpy as np
 
 from elevator import Elevator
 from constant import ElevatorConst, ElevatorColors
-from algorithms import waiter_two_elev, waiter_three_elev, _pick_jinxs, scheduler
+from algorithms import waiter_two_elev, waiter_three_elev, _pick_jinxs
 
 WAITER = 0
 
@@ -23,24 +23,10 @@ class Simulation:
 
         self.max_len = self.calculate_anim_steps()
 
-        # <----DO TESTOW---->
-        # czekanie
         self.elevators[0].final_path = [[4, 3, 4], [4, 3, 3], [4, 2, 3], [4, 1, 3], [4, 0, 3]]
         self.elevators[1].final_path = [[4, 3, 2], [4, 3, 1], [4, 2, 1], [4, 1, 1], [4, 0, 1]]
         self.elevators[2].final_path = [[4, 1, 4], [4, 1, 3], [4, 0, 3]]
 
-        # self.elevators[0].final_path = [[4, 3, 2], [4, 3, 3], [4, 2, 3], [4, 1, 3], [4, 1, 4]]
-        # self.elevators[1].final_path = [[4, 1, 4], [4, 1, 3], [4, 1, 2], [4, 1, 1], [4, 0, 1]]
-        # self.elevators[2].final_path = [[4, 3, 3], [4, 2, 3], [4, 1, 3], [4, 1, 2], [4, 1, 1], [4, 0, 1]]
-
-        # czekanie 3 windy
-        # self.elevators[0].final_path =[[4, 0, 1], [4, 1, 1], [4, 1, 2]]
-        # self.elevators[1].final_path =[[4, 2, 1], [4, 1, 1], [4, 1, 2], [4, 1, 3], [4, 1, 4]]
-        # self.elevators[2].final_path =[[4, 3, 4], [4, 3, 3], [4, 2, 3], [4, 1, 3], [4, 1, 2]]
-
-        # self.elevators[0].final_path = [[4, 1, 4], [4, 1, 3], [4, 0, 3]]
-        # self.elevators[1].final_path = [[4, 1, 2], [4, 1, 3], [4, 1, 4]]
-        # self.elevators[2].final_path = [[4, 0, 3], [4, 1, 3], [4, 1, 4]]
 
         self.elevators[0].DESTINATION = self.elevators[0].final_path[-1]
         self.elevators[1].DESTINATION = self.elevators[1].final_path[-1]
