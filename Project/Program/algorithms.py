@@ -1,6 +1,86 @@
 from constant import ElevatorConst
 
 
+def scheduler(elevX, elevY, pnt, RESTRICTED):
+    # czy X blokuje Y?
+    if elevX.final_path[pnt - 1] in elevY.final_path[pnt:]:
+        pass
+        # czy Y blokuje X?
+        if elevY.final_path[pnt - 1] in elevX.final_path[pnt:]:
+            pass
+            # czy X ma sie gdzie schowac?
+            # hide_pnts_for_elevX = _get_hide_pnts()
+
+            # czy Y ma sie gdzie schowac?
+            # hide_pnts_for_elevY = _get_hide_pnts()
+        else:
+            # jinx, not_jinx = __pick_jinx()
+            # Y lub X czeka
+            # X lub Y jedzie
+            pass
+    # czy Y blokuje X?
+    elif elevY.final_path[pnt - 1] in elevX.final_path[pnt:]:
+        # czy X blokuje Y?
+        if elevX.final_path[pnt - 1] in elevY.final_path[pnt:]:
+            pass
+            # czy X ma sie gdzie schowac?
+            # hide_pnts_for_elevX = _get_hide_pnts()
+
+            # czy Y ma sie gdzie schowac?
+            # hide_pnts_for_elevY = _get_hide_pnts()
+        else:
+            # jinx, not_jinx = __pick_jinx()
+            # Y lub X czeka
+            # X lub Y jedzie
+            pass
+
+
+def _get_hide_pnts(jinx_elev, current_point, RESTRICTED):
+    cond = False
+    hide_pnts = []
+    while not cond:
+        hide_points = __get_hiden_points(current_point, jinx_elev, RESTRICTED)
+        for hide_point in hide_points:
+            cond = __check_cond(jinx_elev, hide_point, RESTRICTED)
+            if cond is not True:
+                current_point = hide_point
+                hide_pnts.append(hide_point)
+                break
+            else:
+                hide_pnts.append(hide_point)
+                break
+
+    return hide_pnts
+
+
+def __check_cond(jinx_elev, hiding_pnt, RESTRICTED):
+    # sprawdzenie czy pierwszy punkt - schowek nie jest sciana
+    is_not_wall = int(jinx_elev.floor[hiding_pnt[1]][hiding_pnt[2]])
+    # warunek prawidlowego punktu-schowka:
+    # nie jest sciana, nie zawiera sie w sciezce windy niechowajacej, nie jest punktem koncowym windy chowajacej
+    cond = is_not_wall != ElevatorConst.WALL and (hiding_pnt not in RESTRICTED)
+    return cond
+
+
+def __get_hiden_points(current_point, jinx_elev, RESTRICTED):
+    hidden_points = [
+                        [current_point[0], current_point[1], current_point[2] - 1],
+                        [current_point[0], current_point[1], current_point[2] + 1],
+                        [current_point[0], current_point[1] - 1, current_point[2]],
+                        [current_point[0], current_point[1] + 1, current_point[2]]
+                    ]
+    new = []
+    for pnt in hidden_points:
+        if not (0 <= pnt[1] < 5 and 0 <= pnt[2] < 5):
+            new.append(pnt)
+        elif int(jinx_elev.floor[pnt[1]][pnt[2]]) == ElevatorConst.WALL:
+            new.append(pnt)
+        elif pnt in RESTRICTED:
+            new.append(pnt)
+    tmp = [pkt for pkt in hidden_points if pkt not in new]
+    return tmp
+
+
 def waiter_two_elev(jinx_elev, not_jinx_elev, pnt, find_again, other_elev):
 
     # jesli obecny punkt pechowej windy nie znajduje sie w sciezce szczesliwej windy
@@ -41,7 +121,6 @@ def get_hide(jinx_elev, not_jinx_elev, pnt, find_again, other_elev=None):
             if _check_cond(jinx_elev, not_jinx_elev, pnt, point, RESTRICTED):
                 hiding_pnt = point
                 steps_for_while = 4
-                # RESTRICTED.append(hiding_pnt)
                 break
             else:
                 previous_hiding_pnt = point
@@ -54,9 +133,15 @@ def get_hide(jinx_elev, not_jinx_elev, pnt, find_again, other_elev=None):
     if new_index is -1:
         new_index = jinx_elev.final_path.index(previous_hiding_pnt)
     jinx_elev.final_path.insert(new_index + 1, hiding_pnt)
+
     if not find_again:
+        if jinx_elev.final_path[new_index] in jinx_elev.final_path[pnt:]:
+            num = jinx_elev.final_path[new_index + 2:].count(jinx_elev.DESTINATION)
+            jinx_elev.final_path[new_index + 2:] = num * [hiding_pnt]
+        else:
+            tmp = jinx_elev.final_path.index(hiding_pnt) + 1
+            jinx_elev.final_path.insert(tmp, previous_hiding_pnt)
         [jinx_elev.final_path.insert(new_index + 1, hiding_pnt) for _ in range(2)]
-        jinx_elev.final_path.insert(new_index + 4, previous_hiding_pnt)
     lng = len(jinx_elev.final_path) - len(not_jinx_elev.final_path)
     [not_jinx_elev.final_path.insert(-1, not_jinx_elev.final_path[-1]) for _ in range(lng)]
 
@@ -96,10 +181,6 @@ def get_hiden_points(curr_pnt, jinx_elev, prev, RESTRICTED):
             new.append(pnt)
         elif pnt == prev:
             new.append(pnt)
-        # elif pnt == not_jix_prev_pnt:
-        #     new.append(pnt)
-        # elif pnt == elev_waiter_pnt:
-        #     new.append(pnt)
     tmp = [pkt for pkt in hidden_points if pkt not in new]
     return tmp
 

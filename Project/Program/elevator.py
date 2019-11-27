@@ -5,7 +5,7 @@ import numpy as np
 from constant import ElevatorConst
 from floor import Floor
 
-SOURCE = []
+SOURCEs = []
 
 
 class Elevator(Floor):
@@ -152,13 +152,13 @@ class Elevator(Floor):
 
         self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL - 1)
         self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL - 1)
-        global SOURCE
-        SOURCE.append([self.source_x, self.source_y])
+        global SOURCEs
+        SOURCEs.append([self.source_x, self.source_y])
 
-        while self.floor[self.source_x][self.source_y] == ElevatorConst.WALL\
-                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_D \
-                or self.floor[self.source_x][self.source_y] == ElevatorConst.SHAFT_A\
-                or [self.source_x, self.source_y] in SOURCE:
+        while self.floor[self.source_x][self.source_y] != ElevatorConst.WALL\
+                and self.floor[self.source_x][self.source_y] != ElevatorConst.SHAFT_D \
+                and self.floor[self.source_x][self.source_y] != ElevatorConst.SHAFT_A\
+                and [self.source_x, self.source_y] not in SOURCEs:
             self.source_x = random.randint(0, ElevatorConst.NUM_OF_FLOORS_HORIZONTAL-1)
             self.source_y = random.randint(0, ElevatorConst.NUM_OF_FLOORS_VERTICAL-1)
         self.floors[self.source_flr][self.source_x][self.source_y] = ElevatorConst.SOURCE
