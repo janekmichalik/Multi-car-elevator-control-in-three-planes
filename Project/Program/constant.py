@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 
 class ElevatorConst:
 
-    NUM_OF_ELEVATORS = 2
-    NUM_OF_ITERATION = 3
+    NUM_OF_ELEVATORS = 3
+    NUM_OF_ITERATION = 1
 
     NUM_OF_FLOORS = 5
     NUM_OF_FLOORS_VERTICAL = 5
@@ -24,17 +24,17 @@ class ElevatorConst:
 
 class ElevatorColors:
 
-    SHAFT_DESC = '#00140d1A'
-    SHAFT_ASC = '#6a10101A'
+    SHAFT_DESC = '#00140d0D'
+    SHAFT_ASC = '#6a10100D'
     WALL = '#2952a3'
     SHAFT_DESC_NO_TRANSPARECNY = '#00140d'
     SHAFT_ASC_NO_TRANSPARECNY = '#6a1010'
     PATH = '#1f77b41A'
-    DESTINATION = ['#ff99ff40', '#42f4e240']
+    DESTINATION = ['#ff8b1f40', '#42f4e240', '#f44e8540']
     SOURCE = ['', '']
-    ELEVATOR = ['#ff99ff', '#49fdb8']
+    ELEVATOR = ['#ecff42', '#49fdb8', '#f44e85']
 
-    EDGE = '#7D84A6'
+    EDGE = '#c2c2c233'
 
 
 class PlotConst:
@@ -44,6 +44,8 @@ class PlotConst:
     asc_shaft = plt.Rectangle((0, 0), 1, 1, fc=ElevatorColors.SHAFT_ASC_NO_TRANSPARECNY)
     elevator_1 = plt.Rectangle((0, 0), 1, 1, fc=ElevatorColors.ELEVATOR[0])
     elevator_2 = plt.Rectangle((0, 0), 1, 1, fc=ElevatorColors.ELEVATOR[1])
+    elevator_3 = plt.Rectangle((0, 0), 1, 1, fc=ElevatorColors.ELEVATOR[2])
 
-    color_list = [wall_color, path_color, desc_shaft, asc_shaft, elevator_1, elevator_2]
-    color_labels = ["Wall", "Path", "Descending shaft", "Ascending shaft", "Elevator no 1", "Elevator no 2"]
+    color_list = [wall_color, path_color, desc_shaft, asc_shaft, elevator_1, elevator_2, elevator_3]
+    color_labels = ["Ściana", "Ścieżka", "Szacht w dół", "Szacht w górę", "Winda nr 1", "Winda nr 2", "Winda nr 3"]
+
